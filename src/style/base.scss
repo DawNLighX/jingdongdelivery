@@ -1,3 +1,27 @@
 html {
-    font-size: 100px;
+    font-size: 26.6666vw;
+}
+
+body {
+    font-size: 0.12rem;
+}
+
+@media (max-width: 320px) {
+    html {
+        font-size: 85px;
+        /* 防止过小 */
+    }
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 100px;
+        /* 平板以上固定 */
+    }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 100px; /* PC端固定 */
+  }
 }
