@@ -10,6 +10,7 @@
       <span class="search__input"><input type="text" /></span>
     </search>
     <div class="banner"><img src="./assets/images/banner.jpg" /></div>
+    <div>123123</div>
   </div>
 
   <footer class="docker">
@@ -139,8 +140,9 @@
   display: block;
 
   /* 盒模型 */
+  height: 0;
   width: 100%;
-  margin-bottom: 0.12rem;
+  padding-bottom: 25.4%; // 利用内边距撑开盒子
   overflow: hidden;
 
   img {
