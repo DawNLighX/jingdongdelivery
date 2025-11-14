@@ -19,7 +19,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@import "../.././style/viriables.scss";
 .layout {
   /* 定位 */
   position: relative;
@@ -30,5 +31,12 @@ export default {
   /* 盒模型 */
   padding: 0 0.18rem 0.7rem;
   background-color: #ffffff;
+
+  background: linear-gradient(
+    to bottom,
+    $jingdong-red 0,
+    $jingdong-red 0.9rem,
+    #ffffff 1.75rem
+  );
 }
 </style>

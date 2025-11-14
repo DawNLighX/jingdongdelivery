@@ -13,75 +13,13 @@
   <div class="banner"><img src="../.././assets/images/banner.jpg" /></div>
 
   <div class="icons">
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
-    </div>
-    <div class="icons__item">
-      <img
-        class="icons__item__img"
-        src="../.././assets/icons/医药健康@2x.png"
-      />
-      <p class="icons__item__desc">xxx</p>
+    <div
+      class="icons__item"
+      v-for="(item, index) in iconsList"
+      :key="index"
+    >
+      <img class="icons__item__img" :src="item.imgUrl" />
+      <p class="icons__item__desc">{{ item.text }}</p>
     </div>
   </div>
 
@@ -90,11 +28,56 @@
 
 <script>
 export default {
-  name: 'StaticPart'
+  name: 'StaticPart',
+  setup () {
+    const iconsList = [
+      {
+        text: '超市便利',
+        imgUrl: require('@/assets/icons/超市@2x.png')
+      },
+      {
+        text: '菜市场',
+        imgUrl: require('@/assets/icons/菜市场@2x.png')
+      },
+      {
+        text: '水果店',
+        imgUrl: require('@/assets/icons/水果店@2x.png')
+      },
+      {
+        text: '鲜花绿植',
+        imgUrl: require('@/assets/icons/鲜花@2x.png')
+      },
+      {
+        text: '医药健康',
+        imgUrl: require('@/assets/icons/医药健康@2x.png')
+      },
+      {
+        text: '家居时尚',
+        imgUrl: require('@/assets/icons/家居@2x.png')
+      },
+      {
+        text: '烘焙蛋糕',
+        imgUrl: require('@/assets/icons/蛋糕@2x.png')
+      },
+      {
+        text: '签到',
+        imgUrl: require('@/assets/icons/签到@2x.png')
+      },
+      {
+        text: '大牌免运',
+        imgUrl: require('@/assets/icons/大牌免运@2x.png')
+      },
+      {
+        text: '红包套餐',
+        imgUrl: require('@/assets/icons/红包@2x.png')
+      }
+    ]
+    return { iconsList }
+  }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../.././style/viriables.scss";
 @import "../.././style/mixins.scss";
 
@@ -109,9 +92,8 @@ export default {
   line-height: 0.22rem;
 
   /* 文本 */
-  color: $content-font-color;
-  font-weight: bold;
-
+  color: #eeeeee;
+  font-weight: 500;
   .position__icon {
     /* 文本 */
     font-size: 0.2rem;
@@ -216,7 +198,7 @@ export default {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: .16rem;
   &__item {
     width: 20%;
     margin-top: 0.16rem;
@@ -227,9 +209,13 @@ export default {
       height: 0.4rem;
     }
     &__desc {
+      line-height: 0.17rem;
+      font-size: 0.12rem;
       margin: 0 auto;
+      margin-top: 0.06rem;
       text-align: center;
       color: $content-font-color;
+      font-weight: 500;
     }
   }
 }

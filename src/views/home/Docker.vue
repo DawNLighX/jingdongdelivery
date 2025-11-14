@@ -1,31 +1,31 @@
 <template>
   <footer class="docker">
-    <div class="docker__item active">
-      <span class="docker__item__icon iconfont">&#xe6b8;</span>
-      <span class="docker__item__title">首页</span>
-    </div>
-    <div class="docker__item">
-      <span class="docker__item__icon iconfont">&#xe6af;</span>
-      <span class="docker__item__title">购物车</span>
-    </div>
-    <div class="docker__item">
-      <span class="docker__item__icon iconfont">&#xe60e;</span>
-      <span class="docker__item__title">订单</span>
-    </div>
-    <div class="docker__item">
-      <span class="docker__item__icon iconfont">&#xe78b;</span>
-      <span class="docker__item__title">我的</span>
+    <div v-for="(item, index) in dockerList"
+    :class="{'docker__item': true, 'docker__item--active': index === 0}"
+    :key="item.icon"
+    >
+      <span class="docker__item__icon iconfont" v-html="item.icon"></span>
+      <span class="docker__item__title">{{item.text}}</span>
     </div>
   </footer>
 </template>
 
 <script>
 export default {
-  name: 'Docker'
+  name: 'Docker',
+  setup () {
+    const dockerList = [
+      { icon: '&#xe6b8;', text: '首页' },
+      { icon: '&#xe6af;', text: '购物车' },
+      { icon: '&#xe60e;', text: '订单' },
+      { icon: '&#xe78b;', text: '我的' }
+    ]
+    return { dockerList }
+  }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../.././style/viriables.scss";
 @import "../.././style/mixins.scss";
 
@@ -90,10 +90,10 @@ export default {
     /* 文本 */
     font-size: 0.11rem;
   }
+}
 
-  &.active {
+.docker__item--active {
     /* 文本 */
     color: $jingdong-red;
-  }
 }
 </style>
