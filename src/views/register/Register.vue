@@ -4,8 +4,8 @@
     <div class="layout__input">
       <input
         class="layout__input__username"
+        type="username"
         placeholder="请输入手机号"
-        v-model="data.username"
       />
     </div>
     <div class="layout__input">
@@ -13,58 +13,39 @@
         class="layout__input__password"
         type="password"
         placeholder="请输入密码"
-        v-model="data.password"
       />
     </div>
-    <div class="layout__login-btn" @click="handleLogin">登录</div>
-    <div class="layout__link">
-      <span class="layout__link__register-btn" @click="handleToRegister"
-        >立即注册</span
-      >
-      <span class="layout__link__middle">|</span>
-      <span class="layout__link__forget-btn">忘记密码</span>
+    <div class="layout__input">
+      <input
+        class="layout__input__password"
+        type="password"
+        placeholder="请再次确认密码"
+      />
+    </div>
+    <div class="layout__register-login-btn" @click="handleRegister">注册并登录</div>
+    <div class="layout__link" @click="handleToLogin">
+      <span class="layout__link__middle">已有账号？去登录</span>
     </div>
   </div>
 </template>
 
 <script>
 import { useRouter } from 'vue-router'
-import { reactive } from 'vue'
-import { post } from '../../utils/request.js'
 
 export default {
-  name: 'Login',
+  // eslint-disable-next-line quotes, comma-dangle
+  name: "Register",
+  // eslint-disable-next-line semi
   setup () {
-    const data = reactive({
-      username: '',
-      password: ''
-    })
-
     const router = useRouter()
-
-    const handleLogin = async () => {
-      try {
-        const result = await post('/api/user/login', {
-          username: data.username,
-          password: data.password
-        })
-        if (result?.errno === 0) {
-          localStorage.isLogin = true
-          router.push({ name: 'Home' })
-        } else {
-          alert('登录失败')
-        }
-      } catch (e) {
-        alert('请求失败')
-      }
+    const handleRegister = () => {
+      localStorage.isLogin = true
+      router.push({ name: 'Home' })
     }
-    // localStorage.isLogin = true
-    // router.push({ name: 'Home' })
-
-    const handleToRegister = () => {
-      router.push({ name: 'Register' })
+    const handleToLogin = () => {
+      router.push({ name: 'Login' })
     }
-    return { handleLogin, handleToRegister, data }
+    return { handleRegister, handleToLogin }
   }
 }
 </script>
@@ -122,7 +103,7 @@ export default {
       }
     }
   }
-  &__login-btn {
+  &__register-login-btn {
     margin: 0.32rem 0.4rem 0.16rem 0.4rem;
     background: rgb(9, 156, 9);
     box-shadow: 0 0.04rem 0.08rem 0 rgba(9, 156, 9, 0.32);
@@ -141,14 +122,6 @@ export default {
     text-align: center;
     height: 0.2rem;
     line-height: 0.2rem;
-    &__register-btn {
-      width: 0.56rem;
-      margin-right: 0.13rem;
-    }
-    &__forget-btn {
-      width: 0.56rem;
-      margin-left: 0.13rem;
-    }
   }
 }
 </style>
