@@ -1,7 +1,7 @@
 <template>
   <header class="position">
     <div class="position__icon position__icon--locate iconfont">&#xe61f;</div>
-    <div class="position__content">保定市徐水区 保险公司家属院东单元202</div>
+    <div class="position__content">保定市徐水区 保险公司家属院</div>
     <div class="position__icon position__icon--notice iconfont">&#xe637;</div>
   </header>
 
@@ -92,7 +92,7 @@ export default {
   line-height: 0.22rem;
 
   /* 文本 */
-  color: #eeeeee;
+  color: #ffffff;
   font-weight: 500;
   .position__icon {
     /* 文本 */
@@ -104,7 +104,7 @@ export default {
     margin-left: 0.08rem;
 
     /* 文本 */
-    font-size: 0.15rem;
+    font-size: 0.14rem;
 
     /* 溢出省略... */
     @include ellipsis;
@@ -125,7 +125,7 @@ export default {
   /* 视觉 */
   background-color: #f8f8f8;
   border-radius: 0.16rem;
-  border: 1px solid $jingdong-red;
+  border: none;
 
   .search__icon {
     /* 布局 */
@@ -135,7 +135,7 @@ export default {
 
     /* 文本 */
     font-size: 0.18rem;
-    color: $jingdong-red;
+    color: $placeholder-caret-color;
 
     /* 盒模型 */
     margin-right: 0.12rem;
@@ -167,7 +167,7 @@ export default {
     background: transparent;
     outline: none;
     display: block;
-    caret-color: $jingdong-red;
+    caret-color: $placeholder-caret-color;
     -webkit-tap-highlight-color: transparent; /* 针对 WebKit 内核的浏览器 */
   }
 }

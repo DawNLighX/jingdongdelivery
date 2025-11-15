@@ -102,12 +102,12 @@ export default {
       &__title {
         font-size: 0.16rem;
         font-weight: 600;
-        line-height: 0.22rem;
+        height:.22rem;
         margin: 0 0 0.08rem 0; // p元素 清除自带高度
       }
       &__tags {
         font-size: 0.13rem;
-        color:#888888;
+        color:$placeholder-caret-color;
         line-height: 0.18rem;
         width: 2.6rem;
         display: grid;

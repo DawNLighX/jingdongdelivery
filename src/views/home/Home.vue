@@ -34,9 +34,9 @@ export default {
 
   background: linear-gradient(
     to bottom,
-    $jingdong-red 0,
-    $jingdong-red 0.9rem,
-    #ffffff 1.75rem
+    $jingdong-green 0,
+    $jingdong-green 0.5rem,
+    #ffffff 1rem
   );
 }
 </style>

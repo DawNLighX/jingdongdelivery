@@ -94,6 +94,6 @@ export default {
 
 .docker__item--active {
     /* 文本 */
-    color: $jingdong-red;
+    color: $jingdong-green;
 }
 </style>
