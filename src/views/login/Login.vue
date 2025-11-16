@@ -4,8 +4,8 @@
     <div class="layout__input">
       <input
         class="layout__input__username"
-        placeholder="请输入手机号"
-        v-model="data.username"
+        placeholder="请输入用户名"
+        v-model="username"
       />
     </div>
     <div class="layout__input">
@@ -13,7 +13,8 @@
         class="layout__input__password"
         type="password"
         placeholder="请输入密码"
-        v-model="data.password"
+        v-model="password"
+        autocomplete="new-password"
       />
     </div>
     <div class="layout__login-btn" @click="handleLogin">登录</div>
@@ -24,47 +25,78 @@
       <span class="layout__link__middle">|</span>
       <span class="layout__link__forget-btn">忘记密码</span>
     </div>
+    <Toast :message="toastMessage" :show="show" />
   </div>
 </template>
 
 <script>
 import { useRouter } from 'vue-router'
-import { reactive } from 'vue'
+import { reactive, toRefs } from 'vue'
 import { post } from '../../utils/request.js'
+import Toast, { toastEffect } from '../../components/Toast.vue'
+
+const loginEffect = (showToast) => {
+  const router = useRouter()
+  const data = reactive({ username: '', password: '' })
+
+  const handleLogin = async () => {
+    try {
+      const { username, password } = data
+
+      if (!username && !password) {
+        showToast('用户名与密码不能为空！')
+        return false
+      }
+
+      if (!password) {
+        showToast('密码不能为空！')
+        return false
+      }
+
+      if (!username) {
+        showToast('用户名不能为空！')
+        return false
+      }
+
+      const result = await post('/api/user/login', {
+        username: data.username,
+        password: data.password
+      })
+      if (result?.errno === 0) {
+        localStorage.isLogin = true
+        router.push({ name: 'Home' })
+      } else {
+        showToast('登录失败')
+      }
+    } catch (e) {
+      showToast('请求失败')
+    }
+  }
+  const { username, password } = toRefs(data)
+
+  return { handleLogin, username, password }
+}
+
+const toRegisterEffect = () => {
+  const router = useRouter()
+  const handleToRegister = () => {
+    router.push({ name: 'Register' })
+  }
+  return { handleToRegister }
+}
 
 export default {
   name: 'Login',
+  components: { Toast },
   setup () {
-    const data = reactive({
-      username: '',
-      password: ''
-    })
-
-    const router = useRouter()
-
-    const handleLogin = async () => {
-      try {
-        const result = await post('/api/user/login', {
-          username: data.username,
-          password: data.password
-        })
-        if (result?.errno === 0) {
-          localStorage.isLogin = true
-          router.push({ name: 'Home' })
-        } else {
-          alert('登录失败')
-        }
-      } catch (e) {
-        alert('请求失败')
-      }
-    }
-    // localStorage.isLogin = true
-    // router.push({ name: 'Home' })
-
-    const handleToRegister = () => {
-      router.push({ name: 'Register' })
-    }
-    return { handleLogin, handleToRegister, data }
+    const { show, toastMessage, showToast } = toastEffect()
+    const { handleLogin, username, password } = loginEffect(showToast)
+    const { handleToRegister } = toRegisterEffect()
+    // const handleLogin = () => {
+    //   localStorage.isLogin = true
+    //   router.push({ name: 'Home' })
+    // }
+    return { handleLogin, handleToRegister, username, password, show, toastMessage }
   }
 }
 </script>
