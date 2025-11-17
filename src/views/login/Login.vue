@@ -102,7 +102,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../.././style/viriables.scss";
+@import "../../style/viriables.scss";
 .layout {
   position: absolute;
   top: 50%;
@@ -144,7 +144,7 @@ export default {
       /* 交互 */
       appearance: none;
       -webkit-appearance: none;
-      -moz-appearance: none
+      -moz-appearance: none;
       border-radius: 0;
       background: transparent;
       outline: none;

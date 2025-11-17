@@ -10,7 +10,7 @@
     <span class="search__input"><input type="text" /></span>
   </search>
 
-  <div class="banner"><img src="../.././assets/images/banner.jpg" /></div>
+  <div class="banner"><img src="../../assets/images/banner.jpg" /></div>
 
   <div class="icons">
     <div
@@ -78,8 +78,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../.././style/viriables.scss";
-@import "../.././style/mixins.scss";
+@import "../../style/viriables.scss";
+@import "../../style/mixins.scss";
 
 .position {
   /* grid布局 */

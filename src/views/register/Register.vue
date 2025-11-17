@@ -112,7 +112,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../.././style/viriables.scss";
+@import "../../style/viriables.scss";
 .layout {
   position: absolute;
   top: 50%;

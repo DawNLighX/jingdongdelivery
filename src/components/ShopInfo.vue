@@ -1,0 +1,67 @@
+<template>
+  <div class="shop">
+    <img class="shop__icon" :src="shopImages[item.imgKey]" />
+    <div class="shop__content">
+      <p class="shop__content__title">{{ item.name }}</p>
+      <div class="shop__content__tags">
+        <span class="shop__content__tags_tag"
+          >月售 {{ item.sales }}</span
+        >
+        <span class="shop__content__tags_tag"
+          >起送 ${{ item.expressLimit }}</span
+        >
+        <span class="shop__content__tags_tag"
+          >基础运费 ${{ item.expressPrice }}</span
+        >
+      </div>
+      <p class="shop__content__ads">{{ item.slogan }}</p>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['item', 'shopImages'],
+  name: 'ShopInfo'
+}
+</script>
+
+<style lang="scss" scoped>
+@import "../style/viriables.scss";
+@import "../style/mixins.scss";
+.shop {
+  display: flex;
+  padding: 0.12rem 0 0 0;
+  &__icon {
+    width: 0.56rem;
+    height: 0.56rem;
+    margin-right: 0.16rem;
+  }
+  &__content {
+    flex: 1;
+    height: 0.56rem;
+    padding-bottom: 0.27rem;
+    color:$content-font-color;
+    border-bottom: 0.01rem solid #e1e1e1;
+    &__title {
+      font-size: 0.16rem;
+      font-weight: 600;
+      height: 0.22rem;
+      margin: 0 0 0.08rem 0; // p元素 清除自带高度
+    }
+    &__tags {
+      font-size: 0.13rem;
+      color: $placeholder-caret-color;
+      line-height: 0.18rem;
+      width: 2.6rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.5fr;
+    }
+    &__ads {
+      font-size: 0.13rem;
+      color: $jingdong-red;
+      margin: 0.08rem 0 0 0;
+    }
+  }
+}
+</style>

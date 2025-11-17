@@ -1,18 +1,15 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '../views/home/Home.vue'
-import Login from '../views/login/Login.vue'
-import Register from '../views/register/Register.vue'
 
 const routes = [
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
-    component: Home
+    component: () => import(/* webpackChunkName: "home" */'../views/home/Home.vue') // 异步加载组件路由
   },
   {
     path: '/login',
     name: 'Login',
-    component: Login,
+    component: () => import(/* webpackChunkName: "login" */'../views/login/Login.vue'),
     beforeEnter (to, from, next) { // 访问某页面之前完成某操作，to表示要去的页面，from表示从哪里来，next是调用跳转
       const { isLogin } = localStorage
       isLogin ? next({ name: 'Home' }) : next() // 如果isLogin为true，则直接跳过此页面进入下一页面
@@ -21,11 +18,16 @@ const routes = [
   {
     path: '/register',
     name: 'Register',
-    component: Register,
-    beforeEnter (to, from, next) { // 访问某页面之前完成某操作，to表示要去的页面，from表示从哪里来，next是调用跳转
+    component: () => import(/* webpackChunkName: "register" */'../views/register/Register.vue'),
+    beforeEnter (to, from, next) {
       const { isLogin } = localStorage
-      isLogin ? next({ name: 'Home' }) : next() // 如果isLogin为true，则直接跳过此页面进入下一页面
+      isLogin ? next({ name: 'Home' }) : next()
     }
+  },
+  {
+    path: '/shop',
+    name: 'Shop',
+    component: () => import(/* webpackChunkName: "shop" */'../views/shop/Shop.vue')
   }
 ]
 
