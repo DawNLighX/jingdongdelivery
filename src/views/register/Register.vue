@@ -152,7 +152,9 @@ export default {
       font-size: 0.16rem; /* 优化字体大小 */
       color: #222222; /* 确保文字颜色足够深 */
       /* 交互 */
+      appearance: none;
       -webkit-appearance: none;
+      -moz-appearance: none;
       border-radius: 0;
       background: transparent;
       outline: none;
