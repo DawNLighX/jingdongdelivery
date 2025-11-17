@@ -1,12 +1,15 @@
 <template>
   <div class="nearby-stores">
     <h3 class="nearby-stores__title">附近店铺</h3>
-    <ShopInfo
-      v-for="item in nearbyList"
-      :key="item._id"
-      :item="item"
-      :shopImages="shopImages"
-    />
+    <router-link
+    v-for="item in nearbyList"
+    :to="`/shop/${item._id}`"
+    :key="item._id"
+    >
+      <ShopInfo
+        :item="item"
+      />
+    </router-link>
   </div>
 </template>
 
@@ -14,39 +17,28 @@
 import { ref } from 'vue'
 import { get } from '../../utils/request.js'
 
-import luosenImg from '@/assets/storeicons/罗森.jpeg'
-import qiyaoyaoImg from '@/assets/storeicons/711.jpeg'
-import jingdongImg from '@/assets/storeicons/京东便利店.jpg'
-import haoxianglaiImg from '@/assets/storeicons/好想来.jpeg'
-import woermaImg from '@/assets/storeicons/walmart.png'
-
 import ShopInfo from '@/components/ShopInfo.vue'
 
 const nearbyStoresEffect = () => {
   const nearbyList = ref([])
-  const shopImages = {
-    luosen: luosenImg,
-    qiyaoyao: qiyaoyaoImg,
-    jingdong: jingdongImg,
-    haoxianglai: haoxianglaiImg,
-    woerma: woermaImg
-  }
   const getNearbyList = async () => {
-    const result = await get('/377491097')
+    const result = await get('/api/shop/hot-list')
     if (result?.errno === 0 && result?.data?.length) {
       nearbyList.value = result.data
     }
   }
-  return { shopImages, nearbyList, getNearbyList }
+  return { nearbyList, getNearbyList }
 }
 
 export default {
   components: { ShopInfo },
   name: 'NearbyStores',
   setup () {
-    const { shopImages, nearbyList, getNearbyList } = nearbyStoresEffect()
+    const { nearbyList, getNearbyList } = nearbyStoresEffect()
+
     getNearbyList()
-    return { nearbyList, shopImages }
+
+    return { nearbyList }
   }
 }
 </script>
@@ -61,5 +53,8 @@ export default {
   font-weight: 500;
   line-height: 0.25rem;
   color: $content-font-color;
+}
+a {
+  text-decoration: none;
 }
 </style>

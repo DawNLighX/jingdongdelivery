@@ -15,6 +15,32 @@ export default {
   name: 'Home',
   components: {
     StaticPart, NearbyStores, Docker
+  },
+  data () {
+    return {
+      scrollPosition: 0 // 保存滚动位置
+    }
+  },
+  activated () {
+    // 从商家页面返回时恢复滚动位置
+    this.$nextTick(() => {
+      window.scrollTo(0, this.scrollPosition)
+    })
+  },
+  beforeRouteLeave (to, from, next) {
+    // 点击商家时保存当前位置
+    if (to.name === 'Shop') {
+      this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop
+    }
+    next()
+  },
+  mounted () {
+    // 组件挂载时也恢复位置（防止刷新后丢失）
+    this.$nextTick(() => {
+      if (this.scrollPosition > 0) {
+        window.scrollTo(0, this.scrollPosition)
+      }
+    })
   }
 }
 </script>
@@ -27,6 +53,11 @@ export default {
   left: 0;
   right: 0;
   top: 0;
+
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 
   /* 盒模型 */
   padding: 0 0.18rem 0.7rem;

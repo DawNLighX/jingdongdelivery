@@ -7,10 +7,7 @@ const instance = axios.create({
 
 export const get = (url, params = {}) => {
   return new Promise((resolve, reject) => {
-    instance.get(url, {
-      params,
-      baseURL: 'https://m1.apifoxmock.com/m2/7414080-7147438-default'
-    }
+    instance.get(url, { params }
     ).then((response) => {
       resolve(response.data)
     }, err => {

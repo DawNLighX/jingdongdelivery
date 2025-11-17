@@ -92,10 +92,7 @@ export default {
     const { show, toastMessage, showToast } = toastEffect()
     const { handleLogin, username, password } = loginEffect(showToast)
     const { handleToRegister } = toRegisterEffect()
-    // const handleLogin = () => {
-    //   localStorage.isLogin = true
-    //   router.push({ name: 'Home' })
-    // }
+
     return { handleLogin, handleToRegister, username, password, show, toastMessage }
   }
 }
