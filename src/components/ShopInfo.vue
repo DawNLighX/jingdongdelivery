@@ -1,7 +1,7 @@
 <template>
   <div class="shop">
     <img class="shop__icon" :src="item.imgUrl" />
-    <div :class="{'shop__content': true, 'shop__content--bordered': hideBorder ? false: true}">
+    <div :class="{'shop__content': true }">
       <p class="shop__content__title">{{ item.name }}</p>
       <div class="shop__content__tags">
         <span class="shop__content__tags_tag"
@@ -31,7 +31,7 @@ export default {
 @import "../style/mixins.scss";
 .shop {
   display: flex;
-  padding: 0.12rem 0 0 0;
+  padding: 0;
   &__icon {
     width: 0.56rem;
     height: 0.56rem;
@@ -40,11 +40,8 @@ export default {
   &__content {
     flex: 1;
     height: 0.56rem;
-    padding-bottom: 0.27rem;
+    padding-bottom: 0rem;
     color:$content-font-color;
-    &--bordered {
-      border-bottom: 0.01rem solid #e1e1e1;
-    }
     &__title {
       font-size: 0.16rem;
       font-weight: 600;

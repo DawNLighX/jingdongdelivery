@@ -7,8 +7,12 @@
         <input class="search__content__input" placeholder="请输入商品名称搜索"/>
       </div>
     </div>
-    <ShopInfo :item="item" :hideBorder="true" v-show="item.imgUrl" />
+    <div class='shop-info-container'>
+      <ShopInfo :item="item" :hideBorder="true" v-show="item.imgUrl" />
+    </div>
   </div>
+  <Product />
+  <Docker />
 </template>
 
 <script>
@@ -16,6 +20,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { reactive, toRefs } from 'vue'
 import { get } from '../../utils/request'
 import ShopInfo from '../../components/ShopInfo.vue'
+import Product from './Product.vue'
+import Docker from './Docker.vue'
 
 const shopInfoEffect = () => {
   const route = useRoute()
@@ -40,7 +46,7 @@ const goBackEffect = () => {
 
 export default {
   name: 'Shop',
-  components: { ShopInfo },
+  components: { ShopInfo, Product, Docker },
   setup () {
     const { item, getItemData } = shopInfoEffect()
     const { handleGoBack } = goBackEffect()
@@ -61,7 +67,7 @@ export default {
   background-color: #fff;
 }
 .search {
-  margin: 0.14rem 0 0.04rem 0;
+  margin: 0.14rem 0 0.16rem 0;
   height: 0.32rem;
   display: flex;
   &__return {
@@ -115,5 +121,9 @@ export default {
         color: $content-font-color;
     }
   }
+}
+.shop-info-container {
+  // 确保占位容器高度与 ShopInfo 一致
+  min-height: 0.71rem;
 }
 </style>

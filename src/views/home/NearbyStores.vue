@@ -6,9 +6,9 @@
     :to="`/shop/${item._id}`"
     :key="item._id"
     >
-      <ShopInfo
-        :item="item"
-      />
+    <div class="shopInfo-margin">
+      <ShopInfo :item="item"/>
+    </div>
     </router-link>
   </div>
 </template>
@@ -56,5 +56,20 @@ export default {
 }
 a {
   text-decoration: none;
+}
+.shopInfo-margin {
+  height: .71rem;
+  padding: 0.12rem 0;
+  position: relative;
+}
+.shopInfo-margin::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 79%;
+  height: 0.02rem;
+  background: #F1F1F1;
+  transform: scaleY(0.5);
 }
 </style>
