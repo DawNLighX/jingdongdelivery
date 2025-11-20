@@ -4,15 +4,9 @@
     <div :class="{'shop__content': true }">
       <p class="shop__content__title">{{ item.name }}</p>
       <div class="shop__content__tags">
-        <span class="shop__content__tags_tag"
-          >月售 {{ item.sales }}</span
-        >
-        <span class="shop__content__tags_tag"
-          >起送 ${{ item.expressLimit }}</span
-        >
-        <span class="shop__content__tags_tag"
-          >基础运费 ${{ item.expressPrice }}</span
-        >
+        <span>月售 <span class="shop__content__tag">{{ item.sales }}</span></span>
+        <span>起送 <span class="shop__content__tag">&yen;{{ item.expressLimit }}</span></span>
+        <span>基础运费 <span class="shop__content__tag">&yen;{{ item.expressPrice }}</span></span>
       </div>
       <p class="shop__content__ads">{{ item.slogan }}</p>
     </div>
@@ -41,7 +35,7 @@ export default {
     flex: 1;
     height: 0.56rem;
     padding-bottom: 0rem;
-    color:$content-font-color;
+    color: $content-font-color;
     &__title {
       font-size: 0.16rem;
       font-weight: 600;
@@ -50,7 +44,7 @@ export default {
     }
     &__tags {
       font-size: 0.13rem;
-      color: $placeholder-caret-color;
+      color: #888888;
       line-height: 0.18rem;
       width: 2.6rem;
       display: grid;

@@ -1,83 +1,234 @@
 <template>
   <div class="product">
     <nav class="product__cats">
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
-      <div class="product__cats__item">全部商品</div>
+      <div
+        :class="{
+          'cats-item': true,
+          'cats-item--active': currentTab === item.tab ? true : false,
+        }"
+        v-for="item in cats"
+        :key="item.tab"
+        @click="handelCatsClick(item.tab)"
+      >
+        {{ item.name }}
+      </div>
     </nav>
     <main class="product__info">
-      <div class="product__info__item">我要O泡</div>
-      <div class="product__info__item">我要O泡</div>
-      <div class="product__info__item">我要O泡</div>
-      <div class="product__info__item">我要O泡</div>
-      <div class="product__info__item">我要O泡</div>
-      <div class="product__info__item">我要O泡</div>
-      <div class="product__info__item">我要O泡</div>
-      <div class="product__info__item">我要O泡</div>
-      <div class="product__info__item">我要O泡</div>
+      <div class="info-item" v-for="item in productList" :key="item._id">
+        <span class="item-img">
+          {{ item.imgUrl }}
+        </span>
+        <span class="item-detail">
+          <span class="item-detail__title">{{ item.name }}</span>
+          <span class="item-detail__sold">月售 {{ item.sales }} 件</span>
+          <span class="item-detail__price">
+            <span class="price-now"
+              ><span class="price-yen">&yen;</span>{{ item.price }}</span
+            >
+            <span class="price-origin"
+              ><span class="price-yen">&yen;</span>{{ item.oldPrice }}</span
+            >
+            <span class="price-amount">
+              <span class="price-amount__minus iconfont">&#xe607;</span>
+              <span class="price-amount__num">88</span>
+              <span class="price-amount__add iconfont">&#xe606;</span>
+            </span>
+          </span>
+        </span>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
+import { get } from '../../utils/request'
+import { useRoute } from 'vue-router'
+import { reactive, ref, toRefs, watchEffect } from 'vue'
+
+const cats = [
+  {
+    name: '全部商品',
+    tab: 'all'
+  },
+  {
+    name: '秒杀',
+    tab: 'seckill'
+  },
+  {
+    name: '新鲜水果',
+    tab: 'fruit'
+  }
+]
+
+const tabEffect = () => {
+  const currentTab = ref(cats[0].tab)
+  const handelCatsClick = (tab) => {
+    currentTab.value = tab
+  }
+  return { currentTab, handelCatsClick }
+}
+
+const listEffect = (currentTab) => {
+  const data = reactive({ productList: [] })
+  const route = useRoute()
+  const getProductData = async (tab) => {
+    const result = await get(`/api/shop/${route.params.id}/products`, {
+      tab: currentTab.value
+    })
+    if (result?.errno === 0 && result?.data?.length) {
+      data.productList = result.data
+    }
+  }
+  watchEffect(() => {
+    getProductData()
+  })
+  const { productList } = toRefs(data)
+  return { productList }
+}
+
 export default {
-  name: 'Product'
+  name: 'Product',
+  setup () {
+    const { currentTab, handelCatsClick } = tabEffect()
+    const { productList } = listEffect(currentTab)
+    // const { productList } = toRefs(data)
+    return { cats, productList, currentTab, handelCatsClick }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+@import "../../style/viriables.scss";
+@import "../../style/mixins.scss";
 .product {
   display: flex;
   position: absolute;
-  background-color: #ddd;
   width: 100%;
   padding-top: 0.24rem;
   top: 1.33rem;
-  bottom: .5rem;
+  bottom: 0.5rem;
   justify-content: space-between;
+
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  overflow: hidden;
+
   &__cats {
-    width:.76rem;
-    background-color: #aaa;
-    overflow-y: scroll;
-    &__item {
-      line-height: .4rem;
-      text-align: center;
-      font-size: .14rem;
-      &--active {
-        background: #ffffff;
-      }
+    width: 0.76rem;
+    color: $content-font-color;
+    background-color: $search-background;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      display: none;
     }
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
+
   &__info {
     flex: 1;
-    background-color: #bbb;
-    overflow-y: scroll;
-    &__item {
-      line-height: .68rem;
-      text-align: center;
-      font-size: .14rem;
-      border-bottom: 0.01rem solid red;
-      padding: .12rem 0;
-      margin: 0 .18rem 0 .16rem;
-      display: flex;
-        &__img {
-          width:.68rem;
-          height:.68rem;
-        }
+    color: $content-font-color;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      display: none;
     }
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.cats-item {
+  line-height: 0.4rem;
+  text-align: center;
+  font-size: 0.14rem;
+
+  &--active {
+    background: #ffffff;
+  }
+}
+
+.info-item {
+  display: flex;
+  gap: 0.16rem;
+  line-height: 0.68rem;
+  text-align: center;
+  font-size: 0.14rem;
+  border-bottom: 0.01rem solid #f1f1f1;
+  padding: 0.12rem 0;
+  margin: 0 0.18rem 0 0.16rem;
+
+  .item-img {
+    width: 0.68rem;
+    height: 0.68rem;
+    background-color: $search-background;
+  }
+
+  .item-detail {
+    flex: 1;
+    height: 0.68rem;
+    display: flex;
+    gap: 0.06rem;
+    flex-direction: column;
+    overflow: hidden;
+
+    span {
+      text-align: left;
+      line-height: 0.2rem;
+    }
+    &__title {
+      line-height: 0.2rem;
+      height: 0.2rem;
+      font-weight: 600;
+      @include ellipsis;
+    }
+    &__sold {
+      line-height: 0.16rem;
+      height: 0.16rem;
+      font-size: 0.12rem;
+    }
+    &__price {
+      line-height: 0.2rem;
+      height: 0.2rem;
+      display: flex;
+    }
+  }
+}
+
+.price-now {
+  margin-right: 0.1rem;
+  font-weight: 600;
+  color: $jingdong-red;
+  .price-yen {
+    font-size: 0.11rem;
+  }
+}
+.price-origin {
+  margin-right: 0.35rem;
+  font-size: 0.1rem;
+  text-decoration: line-through;
+  .price-yen {
+    font-size: 0.1rem;
+  }
+}
+.price-amount {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  &__minus {
+    font-size: 0.2rem;
+    color: $jingdong-green;
+  }
+  &__num {
+    font-size: 0.14rem;
+  }
+  &__add {
+    font-size: 0.2rem;
+    color: $jingdong-green;
   }
 }
 </style>
