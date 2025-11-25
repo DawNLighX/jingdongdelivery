@@ -12,7 +12,7 @@
     </div>
   </div>
   <Product />
-  <Docker />
+  <CartDocker />
 </template>
 
 <script>
@@ -21,7 +21,7 @@ import { reactive, toRefs } from 'vue'
 import { get } from '../../utils/request'
 import ShopInfo from '../../components/ShopInfo.vue'
 import Product from './Product.vue'
-import Docker from './Docker.vue'
+import CartDocker from './CartDocker.vue'
 
 const shopInfoEffect = () => {
   const route = useRoute()
@@ -46,7 +46,7 @@ const goBackEffect = () => {
 
 export default {
   name: 'Shop',
-  components: { ShopInfo, Product, Docker },
+  components: { ShopInfo, Product, CartDocker },
   setup () {
     const { item, getItemData } = shopInfoEffect()
     const { handleGoBack } = goBackEffect()

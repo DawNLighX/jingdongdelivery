@@ -16,7 +16,7 @@
     <main class="product__info">
       <div class="info-item" v-for="item in productList" :key="item._id">
         <span class="item-img">
-          {{ item.imgUrl }}
+          <img :src="item.imgUrl">
         </span>
         <span class="item-detail">
           <span class="item-detail__title">{{ item.name }}</span>
@@ -29,9 +29,15 @@
               ><span class="price-yen">&yen;</span>{{ item.oldPrice }}</span
             >
             <span class="price-amount">
-              <span class="price-amount__minus iconfont">&#xe607;</span>
-              <span class="price-amount__num">88</span>
-              <span class="price-amount__add iconfont">&#xe606;</span>
+              <span :class="{'price-amount__minus':true,
+              'price-amount__minus--disable':cartList?.[shopId]?.[item._id]?.count > 0 ? true : false,
+              'iconfont':true}"
+              @click="()=>{ changeItem(shopId, item._id, item, -1) }"
+              >&#xe607;</span>
+              <span :class="{'price-amount__num':true,
+                'price-amount__num--disable':cartList?.[shopId]?.[item._id]?.count > 0 ? true : false}"
+              >{{cartList?.[shopId]?.[item._id]?.count || 0}}</span>
+              <span class="price-amount__add iconfont" @click="()=>{ changeItem(shopId, item._id, item, 1) }">&#xe606;</span>
             </span>
           </span>
         </span>
@@ -43,6 +49,7 @@
 <script>
 import { get } from '../../utils/request'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 import { reactive, ref, toRefs, watchEffect } from 'vue'
 
 const cats = [
@@ -68,11 +75,10 @@ const tabEffect = () => {
   return { currentTab, handelCatsClick }
 }
 
-const listEffect = (currentTab) => {
+const listEffect = (currentTab, shopId) => {
   const data = reactive({ productList: [] })
-  const route = useRoute()
   const getProductData = async (tab) => {
-    const result = await get(`/api/shop/${route.params.id}/products`, {
+    const result = await get(`/api/shop/${shopId}/products`, {
       tab: currentTab.value
     })
     if (result?.errno === 0 && result?.data?.length) {
@@ -83,16 +89,30 @@ const listEffect = (currentTab) => {
     getProductData()
   })
   const { productList } = toRefs(data)
-  return { productList }
+  return { productList, shopId }
+}
+
+const cartEffect = () => {
+  const store = useStore()
+  const { cartList } = toRefs(store.state)
+  const changeItem = (shopId, productId, productInfo, num) => {
+    // 修改store内数据
+    store.commit('changeItem', { shopId, productId, productInfo, num })
+  }
+  return { cartList, changeItem }
 }
 
 export default {
   name: 'Product',
   setup () {
+    const route = useRoute()
+    const shopId = route.params.id
+
     const { currentTab, handelCatsClick } = tabEffect()
-    const { productList } = listEffect(currentTab)
+    const { productList } = listEffect(currentTab, shopId)
+    const { cartList, changeItem } = cartEffect()
     // const { productList } = toRefs(data)
-    return { cats, productList, currentTab, handelCatsClick }
+    return { cats, productList, currentTab, cartList, shopId, handelCatsClick, changeItem }
   }
 }
 </script>
@@ -125,6 +145,12 @@ export default {
     -ms-overflow-style: none;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+
+    -webkit-tap-highlight-color: transparent;
+      // 保持统一样式
+    -webkit-appearance: none;
+    -moz-appearance: none;    // Firefox
+    appearance: none;
   }
 
   &__info {
@@ -219,15 +245,24 @@ export default {
   display: flex;
   justify-content: space-between;
   align-content: center;
+  -webkit-tap-highlight-color: transparent;
   &__minus {
-    font-size: 0.2rem;
-    color: $jingdong-green;
+    font-size: 0.24rem;
+    color: #888888;
+    visibility: hidden;
+    &--disable {
+      visibility: visible;
+    }
   }
   &__num {
     font-size: 0.14rem;
+    visibility: hidden;
+    &--disable {
+      visibility: visible;
+    }
   }
   &__add {
-    font-size: 0.2rem;
+    font-size: 0.24rem;
     color: $jingdong-green;
   }
 }
