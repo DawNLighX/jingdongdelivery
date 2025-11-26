@@ -32,12 +32,12 @@
               <span :class="{'price-amount__minus':true,
               'price-amount__minus--disable':cartList?.[shopId]?.[item._id]?.count > 0 ? true : false,
               'iconfont':true}"
-              @click="()=>{ changeItem(shopId, item._id, item, -1) }"
+              @click="changeItem(shopId, item._id, item, -1)"
               >&#xe607;</span>
               <span :class="{'price-amount__num':true,
                 'price-amount__num--disable':cartList?.[shopId]?.[item._id]?.count > 0 ? true : false}"
               >{{cartList?.[shopId]?.[item._id]?.count || 0}}</span>
-              <span class="price-amount__add iconfont" @click="()=>{ changeItem(shopId, item._id, item, 1) }">&#xe606;</span>
+              <span class="price-amount__add iconfont" @click="changeItem(shopId, item._id, item, 1)">&#xe606;</span>
             </span>
           </span>
         </span>
@@ -209,45 +209,55 @@ export default {
       line-height: 0.2rem;
       height: 0.2rem;
       font-weight: 600;
+      display: flex;
+      align-items: center;
       @include ellipsis;
     }
     &__sold {
       line-height: 0.16rem;
       height: 0.16rem;
       font-size: 0.12rem;
+      display: flex;
+      align-items: center;
     }
     &__price {
-      line-height: 0.2rem;
       height: 0.2rem;
       display: flex;
+      align-items: center;
     }
   }
 }
 
 .price-now {
-  margin-right: 0.1rem;
+  margin-right: 0.06rem;
   font-weight: 600;
   color: $jingdong-red;
+  height: 0.2rem;
+  display: flex;
+  align-items: baseline;
   .price-yen {
-    font-size: 0.11rem;
+    font-size: 0.12rem;
   }
 }
 .price-origin {
-  margin-right: 0.35rem;
+  flex: 1;
   font-size: 0.1rem;
   text-decoration: line-through;
+  display: flex;
+  align-items: baseline;
+  color:#888888;
   .price-yen {
-    font-size: 0.1rem;
+    font-size: 0.09rem;
   }
 }
 .price-amount {
-  flex: 1;
+  width: .68rem;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-content: center;
   -webkit-tap-highlight-color: transparent;
   &__minus {
-    font-size: 0.24rem;
+    font-size: 0.20rem;
     color: #888888;
     visibility: hidden;
     &--disable {
@@ -262,7 +272,7 @@ export default {
     }
   }
   &__add {
-    font-size: 0.24rem;
+    font-size: 0.20rem;
     color: $jingdong-green;
   }
 }
