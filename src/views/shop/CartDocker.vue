@@ -1,14 +1,24 @@
 <template>
-  <div class="cart-list">
+  <div class="mask" v-if="cartShow" @click="showCart()"></div>
+  <div class="cart-list" v-if="cartShow">
     <div class="cart-list__top-bar">
-      <span></span>
-      <span class="cart-list__top-bar__clear">清空购物车</span>
+      <div class="cart-list__top-bar__all">
+        <span
+          class="cart-list__top-bar__icon iconfont"
+          v-html="allSelected ? `&#xe652;` : `&#xe651;`"
+          @click="selectAll(shopId)"
+        ></span>
+        <span class="cart-list__top-bar__text">全选</span>
+      </div>
+      <span
+        class="cart-list__top-bar__clear"
+        @click="clearCart(shopId)"
+      >清空购物车</span>
     </div>
     <div class="cart-list__scroll-area">
       <div
         :class="{'info-item':true,
-        'info-item--disable': !(item.count > 0)
-        }"
+        'info-item--disable': !(item.count > 0)}"
         v-for="item in productList"
         :key="item._id"
       >
@@ -45,7 +55,7 @@
   </div>
   <footer class="docker">
     <div class="docker__cart">
-      <div class="docker__cart__icon iconfont">&#xe636;</div>
+      <div class="docker__cart__icon iconfont" @click="showCart()">&#xe636;</div>
       <div class="docker__cart__amount">{{totalAmount}}</div>
     </div>
     <span class="docker__total">
@@ -58,7 +68,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
@@ -67,6 +77,7 @@ const cartEffect = () => {
   const route = useRoute()
   const shopId = route.params.id
   const cartList = store.state.cartList
+
   const totalAmount = computed(() => {
     const productList = cartList[shopId]
     let count = 0
@@ -96,6 +107,18 @@ const cartEffect = () => {
     return productList
   })
 
+  const allSelected = computed(() => {
+    const productList = cartList[shopId]
+    if (!productList) return false
+
+    const productArray = Object.values(productList)
+    const validProducts = productArray.filter(product => product.count > 0)
+
+    if (validProducts.length === 0) return false // 没有有效商品时返回false
+
+    return validProducts.every(product => product.check)
+  })
+
   const changeItem = (shopId, productId, productInfo, num) => {
     store.commit('changeItem', { shopId, productId, productInfo, num })
   }
@@ -104,14 +127,45 @@ const cartEffect = () => {
     store.commit('chooseCartItem', { shopId, productId })
   }
 
-  return { totalAmount, totalPrice, productList, shopId, cartList, changeItem, chooseCartItem }
+  const clearCart = (shopId) => {
+    store.commit('clearCart', { shopId })
+  }
+
+  const selectAll = (shopId) => {
+    store.commit('selectAll', { shopId })
+  }
+
+  return { totalAmount, totalPrice, productList, shopId, cartList, allSelected, changeItem, chooseCartItem, clearCart, selectAll }
+}
+
+const showCartEffect = () => {
+  const cartShow = ref(false)
+  const showCart = () => {
+    cartShow.value = !cartShow.value
+  }
+
+  return { cartShow, showCart }
 }
 
 export default {
   name: 'CartDocker',
   setup () {
-    const { totalAmount, totalPrice, productList, shopId, cartList, changeItem, chooseCartItem } = cartEffect()
-    return { totalAmount, totalPrice, productList, shopId, cartList, changeItem, chooseCartItem }
+    const { totalAmount, totalPrice, productList, shopId, cartList, allSelected, changeItem, chooseCartItem, clearCart, selectAll } = cartEffect()
+    const { cartShow, showCart } = showCartEffect()
+    return {
+      totalAmount,
+      totalPrice,
+      productList,
+      shopId,
+      cartList,
+      allSelected,
+      changeItem,
+      chooseCartItem,
+      clearCart,
+      selectAll,
+      cartShow,
+      showCart
+    }
   }
 }
 </script>
@@ -120,6 +174,15 @@ export default {
 @import "../../style/viriables.scss";
 @import "../../style/mixins.scss";
 
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* 50%透明度黑色 */
+  z-index: 100;
+}
 .docker {
   /* 定位 */
   position: fixed;
@@ -229,8 +292,32 @@ export default {
   color: $content-font-color;
 
   &__top-bar {
+    display: flex;
+    gap: 2.13rem;
     line-height: .52rem;
     height: .52rem;
+    font-size: .14rem;
+    &__all {
+      display: flex;
+      align-items: center;
+      margin-left: 0.18rem;
+      span {
+      line-height: .52rem;
+      height: .52rem;
+      }
+    }
+    &__clear {
+      flex: 1;
+      text-align: right;
+      margin-right: .18rem;
+    }
+    &__icon {
+      font-size: .20rem;
+      color: $jingdong-green;
+    }
+    &__text {
+      margin-left: .08rem;
+    }
   }
 
   &__scroll-area {
@@ -316,7 +403,7 @@ export default {
   text-decoration: line-through;
   display: flex;
   align-items: baseline;
-  color:#888888;
+  color: $placeholder-caret-color;
   .price-yen {
     font-size: 0.09rem;
   }
@@ -329,7 +416,7 @@ export default {
   -webkit-tap-highlight-color: transparent;
   &__minus {
     font-size: 0.20rem;
-    color: #888888;
+    color: $placeholder-caret-color;
   }
   &__num {
     font-size: 0.14rem;

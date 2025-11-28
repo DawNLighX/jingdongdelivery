@@ -44,7 +44,7 @@ export default {
     }
     &__tags {
       font-size: 0.13rem;
-      color: #888888;
+      color: $placeholder-caret-color;
       line-height: 0.18rem;
       width: 2.6rem;
       display: grid;

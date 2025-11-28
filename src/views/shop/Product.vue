@@ -245,7 +245,7 @@ export default {
   text-decoration: line-through;
   display: flex;
   align-items: baseline;
-  color:#888888;
+  color: $placeholder-caret-color;
   .price-yen {
     font-size: 0.09rem;
   }
@@ -258,7 +258,7 @@ export default {
   -webkit-tap-highlight-color: transparent;
   &__minus {
     font-size: 0.20rem;
-    color: #888888;
+    color: $placeholder-caret-color;
     visibility: hidden;
     &--disable {
       visibility: visible;
