@@ -63,14 +63,14 @@
       <span class="docker__total__num">&yen;{{totalPrice}}</span>
       <span class="docker__total__textDeli">免基础运费</span>
     </span>
-    <div class="docker__order">去结算</div>
+    <div class="docker__order" @click="handleToCart()">去结算</div>
   </footer>
 </template>
 
 <script>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const cartEffect = () => {
   const store = useStore()
@@ -79,7 +79,7 @@ const cartEffect = () => {
   const cartList = store.state.cartList
 
   const totalAmount = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -91,7 +91,7 @@ const cartEffect = () => {
   })
 
   const totalPrice = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -103,12 +103,12 @@ const cartEffect = () => {
   })
 
   const productList = computed(() => {
-    const productList = Object.values(cartList[shopId] || {})
-    return productList
+    const productList = cartList[shopId]?.productList || {}
+    return Object.values(productList)
   })
 
   const allSelected = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     if (!productList) return false
 
     const productArray = Object.values(productList)
@@ -147,11 +147,20 @@ const showCartEffect = () => {
   return { cartShow, showCart }
 }
 
+const toRegisterEffect = () => {
+  const router = useRouter()
+  const handleToCart = () => {
+    router.push({ name: 'Cart' })
+  }
+  return { handleToCart }
+}
+
 export default {
   name: 'CartDocker',
   setup () {
     const { totalAmount, totalPrice, productList, shopId, cartList, allSelected, changeItem, chooseCartItem, clearCart, selectAll } = cartEffect()
     const { cartShow, showCart } = showCartEffect()
+    const { handleToCart } = toRegisterEffect()
     return {
       totalAmount,
       totalPrice,
@@ -164,7 +173,8 @@ export default {
       clearCart,
       selectAll,
       cartShow,
-      showCart
+      showCart,
+      handleToCart
     }
   }
 }

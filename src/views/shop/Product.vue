@@ -30,14 +30,14 @@
             >
             <span class="price-amount">
               <span :class="{'price-amount__minus':true,
-              'price-amount__minus--disable':cartList?.[shopId]?.[item._id]?.count > 0 ? true : false,
+              'price-amount__minus--disable':cartList?.[shopId]?.productList?.[item._id]?.count > 0 ? true : false,
               'iconfont':true}"
-              @click="changeItem(shopId, item._id, item, -1)"
+              @click="changeItem(shopId, shopName, item._id, item, -1)"
               >&#xe607;</span>
               <span :class="{'price-amount__num':true,
-                'price-amount__num--disable':cartList?.[shopId]?.[item._id]?.count > 0 ? true : false}"
-              >{{cartList?.[shopId]?.[item._id]?.count || 0}}</span>
-              <span class="price-amount__add iconfont" @click="changeItem(shopId, item._id, item, 1)">&#xe606;</span>
+                'price-amount__num--disable':cartList?.[shopId]?.productList?.[item._id]?.count > 0 ? true : false}"
+              >{{cartList?.[shopId]?.productList?.[item._id]?.count || 0}}</span>
+              <span class="price-amount__add iconfont" @click="changeItem(shopId, shopName, item._id, item, 1)">&#xe606;</span>
             </span>
           </span>
         </span>
@@ -95,24 +95,27 @@ const listEffect = (currentTab, shopId) => {
 const cartEffect = () => {
   const store = useStore()
   const { cartList } = toRefs(store.state)
-  const changeItem = (shopId, productId, productInfo, num) => {
-    // 修改store内数据
-    store.commit('changeItem', { shopId, productId, productInfo, num })
+  const changeItem = (shopId, shopName, productId, productInfo, num) => {
+    store.commit('changeItem', { shopId, shopName, productId, productInfo, num })
   }
-  return { cartList, changeItem }
+  const addShopName = (shopId, shopName) => {
+    store.commit('addShopName', { shopId, shopName })
+  }
+  return { cartList, changeItem, addShopName }
 }
 
 export default {
   name: 'Product',
+  props: ['shopName'],
   setup () {
     const route = useRoute()
     const shopId = route.params.id
 
     const { currentTab, handelCatsClick } = tabEffect()
     const { productList } = listEffect(currentTab, shopId)
-    const { cartList, changeItem } = cartEffect()
+    const { cartList, changeItem, addShopName } = cartEffect()
     // const { productList } = toRefs(data)
-    return { cats, productList, currentTab, cartList, shopId, handelCatsClick, changeItem }
+    return { cats, productList, currentTab, cartList, shopId, handelCatsClick, changeItem, addShopName }
   }
 }
 </script>

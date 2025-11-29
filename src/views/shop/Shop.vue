@@ -11,7 +11,7 @@
       <ShopInfo :item="item" :hideBorder="true" v-show="item.imgUrl" />
     </div>
   </div>
-  <Product />
+  <Product :shopName="item.name"/>
   <CartDocker />
 </template>
 

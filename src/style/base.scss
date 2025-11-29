@@ -35,3 +35,40 @@ textarea {
     font-size: 0.16rem;
     /* iOS 不会缩放 16px 以上的字体 */
 }
+
+/* 强制重置所有 router-link 样式 */
+footer.docker a[href],
+div.docker a[href],
+.docker a[href] {
+  text-decoration: none !important;
+  color: inherit !important;
+  outline: none !important;
+  background: none !important;
+  border: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  
+  &:hover,
+  &:focus,
+  &:active,
+  &:visited {
+    text-decoration: none !important;
+    color: inherit !important;
+    outline: none !important;
+    background: none !important;
+  }
+}
+
+/* 特别针对激活状态 */
+footer.docker a.router-link-active,
+footer.docker a.router-link-exact-active,
+div.docker a.router-link-active, 
+div.docker a.router-link-exact-active {
+  text-decoration: none !important;
+  color: inherit !important;
+  background: none !important;
+  border: none !important;
+}
