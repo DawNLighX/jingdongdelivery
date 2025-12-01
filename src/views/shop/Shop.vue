@@ -108,7 +108,7 @@ export default {
       outline: none;
       background: transparent;
       display: block;
-      caret-color: $content-font-color;
+      caret-color: $placeholder-caret-color;
       // 移除点击高亮效果
       -webkit-tap-highlight-color: transparent;
       // 保持统一样式

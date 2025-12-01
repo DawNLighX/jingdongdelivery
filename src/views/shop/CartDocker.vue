@@ -63,14 +63,18 @@
       <span class="docker__total__num">&yen;{{totalPrice}}</span>
       <span class="docker__total__textDeli">免基础运费</span>
     </span>
-    <div class="docker__order" @click="handleToCart()">去结算</div>
+    <div class="docker__order">
+      <router-link :to="{ path: `/orderConfirm/${shopId}` }">
+        去结算
+      </router-link>
+    </div>
   </footer>
 </template>
 
 <script>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 const cartEffect = () => {
   const store = useStore()
@@ -147,20 +151,11 @@ const showCartEffect = () => {
   return { cartShow, showCart }
 }
 
-const toRegisterEffect = () => {
-  const router = useRouter()
-  const handleToCart = () => {
-    router.push({ name: 'Cart' })
-  }
-  return { handleToCart }
-}
-
 export default {
   name: 'CartDocker',
   setup () {
     const { totalAmount, totalPrice, productList, shopId, cartList, allSelected, changeItem, chooseCartItem, clearCart, selectAll } = cartEffect()
     const { cartShow, showCart } = showCartEffect()
-    const { handleToCart } = toRegisterEffect()
     return {
       totalAmount,
       totalPrice,
@@ -173,8 +168,7 @@ export default {
       clearCart,
       selectAll,
       cartShow,
-      showCart,
-      handleToCart
+      showCart
     }
   }
 }
@@ -212,6 +206,7 @@ export default {
   padding-bottom: env(safe-area-inset-bottom); //安全区域适配
 
   /* 视觉 */
+  -webkit-tap-highlight-color: transparent;
   border-top: 1px solid #f1f1f1;
   background-color: rgba(255, 255, 255, 0.9);
   color: $content-font-color;
@@ -298,6 +293,7 @@ export default {
   box-sizing: border-box;
   padding-bottom: env(safe-area-inset-bottom); //安全区域适配
 
+  -webkit-tap-highlight-color: transparent;
   background-color: #ffffff;
   color: $content-font-color;
 
@@ -426,7 +422,7 @@ export default {
   -webkit-tap-highlight-color: transparent;
   &__minus {
     font-size: 0.20rem;
-    color: $placeholder-caret-color;
+    color: #bbbbbb;
   }
   &__num {
     font-size: 0.14rem;

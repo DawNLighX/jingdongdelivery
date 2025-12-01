@@ -261,7 +261,7 @@ export default {
   -webkit-tap-highlight-color: transparent;
   &__minus {
     font-size: 0.20rem;
-    color: $placeholder-caret-color;
+    color: #bbbbbb;
     visibility: hidden;
     &--disable {
       visibility: visible;
