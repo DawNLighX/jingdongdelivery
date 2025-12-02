@@ -1,5 +1,17 @@
 $content-font-color: #333333;
 $placeholder-caret-color: #999999;
 $jingdong-red: #e1251b;
-$jingdong-green: rgb(53, 213, 64);
 $search-background: #F5F5F5;
+
+$green-900: #088A08;  // 最深: 登录/注册按钮
+$green-700: #0CA80C;  // 中等: Docker操作按钮
+$green-500: #1DC51D;  // 基准: 主要品牌色
+$green-300: #35D535;  // 京东绿: 顶部渐变主色
+$green-100: #E8F7E8;  // 最浅: 背景/渐变辅助
+
+$gray-300: #B3B3B3;
+
+$color-login: $green-900;       // 登录注册按钮
+$color-docker: $green-700;      // Docker操作按钮
+$jingdong-green: $green-300;    // 京东绿 (顶部渐变)
+$color-light-bg: $green-100; 

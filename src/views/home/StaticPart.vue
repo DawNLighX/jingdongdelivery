@@ -94,10 +94,12 @@ export default {
   /* 文本 */
   color: #ffffff;
   font-weight: 500;
+
   .position__icon {
     /* 文本 */
     font-size: 0.2rem;
   }
+
   .position__content {
     /* 盒模型 */
     max-width: 2.4rem;
@@ -141,6 +143,7 @@ export default {
     margin-right: 0.12rem;
     line-height: 1;
   }
+
   .search__input {
     /* 布局 */
     display: block;
@@ -149,6 +152,7 @@ export default {
     /* 文本 */
     font-size: 0.14rem;
   }
+
   .search__input input {
     /* 布局 */
 
@@ -199,15 +203,18 @@ export default {
   align-items: center;
   justify-content: space-between;
   margin-bottom: .16rem;
+
   &__item {
     width: 20%;
     margin-top: 0.16rem;
+
     &__img {
       display: block;
       margin: 0 auto;
       width: 0.4rem;
       height: 0.4rem;
     }
+
     &__desc {
       line-height: 0.17rem;
       font-size: 0.12rem;

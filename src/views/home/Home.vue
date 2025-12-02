@@ -47,6 +47,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
+
 .layout {
   /* 定位 */
   position: relative;

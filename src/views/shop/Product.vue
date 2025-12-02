@@ -50,7 +50,7 @@
 import { get } from '../../utils/request'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { reactive, ref, toRefs, watchEffect } from 'vue'
+import { reactive, ref, toRefs, watchEffect, onMounted } from 'vue'
 
 const cats = [
   {
@@ -107,7 +107,7 @@ const cartEffect = () => {
 export default {
   name: 'Product',
   props: ['shopName'],
-  setup () {
+  setup (props) {
     const route = useRoute()
     const shopId = route.params.id
 
@@ -115,6 +115,10 @@ export default {
     const { productList } = listEffect(currentTab, shopId)
     const { cartList, changeItem, addShopName } = cartEffect()
     // const { productList } = toRefs(data)
+    onMounted(() => {
+      addShopName(shopId, props.shopName)
+    })
+
     return { cats, productList, currentTab, cartList, shopId, handelCatsClick, changeItem, addShopName }
   }
 }
@@ -123,6 +127,7 @@ export default {
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
 @import "../../style/mixins.scss";
+
 .product {
   display: flex;
   position: absolute;
@@ -141,9 +146,11 @@ export default {
     color: $content-font-color;
     background-color: $search-background;
     overflow-y: auto;
+
     &::-webkit-scrollbar {
       display: none;
     }
+
     scrollbar-width: none;
     -ms-overflow-style: none;
     overscroll-behavior: contain;
@@ -160,9 +167,11 @@ export default {
     flex: 1;
     color: $content-font-color;
     overflow-y: auto;
+
     &::-webkit-scrollbar {
       display: none;
     }
+
     scrollbar-width: none;
     -ms-overflow-style: none;
     overscroll-behavior: contain;
@@ -208,6 +217,7 @@ export default {
       text-align: left;
       line-height: 0.2rem;
     }
+
     &__title {
       line-height: 0.2rem;
       height: 0.2rem;
@@ -216,6 +226,7 @@ export default {
       align-items: center;
       @include ellipsis;
     }
+
     &__sold {
       line-height: 0.16rem;
       height: 0.16rem;
@@ -223,6 +234,7 @@ export default {
       display: flex;
       align-items: center;
     }
+
     &__price {
       height: 0.2rem;
       display: flex;
@@ -238,10 +250,12 @@ export default {
   height: 0.2rem;
   display: flex;
   align-items: baseline;
+
   .price-yen {
     font-size: 0.12rem;
   }
 }
+
 .price-origin {
   flex: 1;
   font-size: 0.1rem;
@@ -249,6 +263,7 @@ export default {
   display: flex;
   align-items: baseline;
   color: $placeholder-caret-color;
+
   .price-yen {
     font-size: 0.09rem;
   }
@@ -259,14 +274,17 @@ export default {
   align-items: center;
   justify-content: space-between;
   -webkit-tap-highlight-color: transparent;
+
   &__minus {
     font-size: 0.20rem;
-    color: #bbbbbb;
+    color: $gray-300;
     visibility: hidden;
+
     &--disable {
       visibility: visible;
     }
   }
+
   &__num {
     font-size: 0.14rem;
     visibility: hidden;
@@ -274,9 +292,10 @@ export default {
       visibility: visible;
     }
   }
+
   &__add {
     font-size: 0.20rem;
-    color: $jingdong-green;
+    color: $green-300;
   }
 }
 </style>

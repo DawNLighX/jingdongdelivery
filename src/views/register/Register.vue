@@ -110,18 +110,21 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
+
 .layout {
   position: absolute;
   top: 50%;
   left: 0;
   right: 0;
   transform: translateY(-50%);
+
   &__img {
     display: block;
     margin: 0 auto 0.4rem auto;
     height: 1.2rem;
     width: 1.2rem;
   }
+
   &__input {
     box-sizing: border-box;
     background: #ffffff;
@@ -134,10 +137,12 @@ export default {
     margin-bottom: 0.16rem;
     display: flex;
     align-items: center;
+
     &:focus-within {
       border-color: $jingdong-green;
       box-shadow: 0 0 0 0.02rem rgba($jingdong-green, 0.1);
     }
+
     input {
       line-height: 0.46rem;
       height: 100%;
@@ -157,15 +162,17 @@ export default {
       outline: none;
       caret-color: $placeholder-caret-color;
       -webkit-tap-highlight-color: transparent; /* 针对 WebKit 内核的浏览器 */
+
       &::placeholder {
         color: $placeholder-caret-color;
         font-size: 0.14rem;
       }
     }
   }
+
   &__register-login-btn {
     margin: 0.32rem 0.4rem 0.16rem 0.4rem;
-    background: rgb(9, 156, 9);
+    background: $color-login;
     box-shadow: 0 0.04rem 0.08rem 0 rgba(9, 156, 9, 0.32);
     border-radius: 0.06rem;
     width: 2.95rem;
@@ -175,6 +182,7 @@ export default {
     font-size: 0.16rem;
     color: #ffffff;
   }
+
   &__link {
     font-size: 0.14rem;
     color: rgba(0, 0, 0, 0.5);

@@ -2,9 +2,9 @@
   <div class="nearby-stores">
     <h3 class="nearby-stores__title">附近店铺</h3>
     <router-link
-    v-for="item in nearbyList"
-    :to="`/shop/${item._id}`"
-    :key="item._id"
+      v-for="item in nearbyList"
+      :to="`/shop/${item._id}`"
+      :key="item._id"
     >
     <div class="shopInfo-margin">
       <ShopInfo :item="item"/>
@@ -46,6 +46,7 @@ export default {
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
 @import "../../style/mixins.scss";
+
 .nearby-stores__title {
   margin: 0.16rem 0 0.02rem 0;
   padding: 0;
@@ -54,14 +55,17 @@ export default {
   line-height: 0.25rem;
   color: $content-font-color;
 }
+
 a {
   text-decoration: none;
 }
+
 .shopInfo-margin {
   height: .71rem;
   padding: 0.12rem 0;
   position: relative;
 }
+
 .shopInfo-margin::after {
   content: "";
   position: absolute;

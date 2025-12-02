@@ -12,7 +12,7 @@
     </div>
   </div>
   <Product :shopName="item.name"/>
-  <CartDocker />
+  <CartDocker :shopName="item.name"/>
 </template>
 
 <script>

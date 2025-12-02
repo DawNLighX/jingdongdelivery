@@ -64,7 +64,7 @@
       <span class="docker__total__textDeli">免基础运费</span>
     </span>
     <div class="docker__order">
-      <router-link :to="{ path: `/orderConfirm/${shopId}` }">
+      <router-link :to="{ path: `/orderConfirm/${shopId}`, query: { shopName } }">
         去结算
       </router-link>
     </div>
@@ -153,6 +153,7 @@ const showCartEffect = () => {
 
 export default {
   name: 'CartDocker',
+  props: ['shopName'],
   setup () {
     const { totalAmount, totalPrice, productList, shopId, cartList, allSelected, changeItem, chooseCartItem, clearCart, selectAll } = cartEffect()
     const { cartShow, showCart } = showCartEffect()
@@ -187,6 +188,7 @@ export default {
   background: rgba(0, 0, 0, 0.5); /* 50%透明度黑色 */
   z-index: 100;
 }
+
 .docker {
   /* 定位 */
   position: fixed;
@@ -212,11 +214,13 @@ export default {
   color: $content-font-color;
   backdrop-filter: blur(0.15rem);
   -webkit-backdrop-filter: blur(0.15rem); //毛玻璃
+
   &__cart {
     width: 0.76rem;
     height: 0.5rem;
     align-items: center;
     position: relative;
+
     &__icon {
       position: absolute;
       z-index: 0;
@@ -228,8 +232,9 @@ export default {
       width: 0.36rem;
       height: 0.36rem;
       text-align: center;
-      color: rgb(10, 176, 10);
+      color: $color-docker;
     }
+
     &__amount {
       position: absolute;
       z-index: 111;
@@ -253,10 +258,12 @@ export default {
     font-size: 0.16rem;
     height: 100%;
     line-height: 1;
+
     &__text {
       font-size: 0.12rem;
       line-height: 1;
     }
+
     &__num {
       flex: 1;
       font-size: 0.18rem;
@@ -264,6 +271,7 @@ export default {
       color: $jingdong-red;
       line-height: 1;
     }
+
     &__textDeli {
       width: 0.6rem;
       font-size: 0.12rem;
@@ -278,7 +286,7 @@ export default {
     text-align: center;
     font-size: 0.14rem;
     color: #ffffff;
-    background-color: rgb(10, 176, 10);
+    background-color: $color-docker;
   }
 }
 
@@ -303,24 +311,29 @@ export default {
     line-height: .52rem;
     height: .52rem;
     font-size: .14rem;
+
     &__all {
       display: flex;
       align-items: center;
       margin-left: 0.18rem;
+
       span {
       line-height: .52rem;
       height: .52rem;
       }
     }
+
     &__clear {
       flex: 1;
       text-align: right;
       margin-right: .18rem;
     }
+
     &__icon {
       font-size: .20rem;
-      color: $jingdong-green;
+      color: $green-300;
     }
+
     &__text {
       margin-left: .08rem;
     }
@@ -330,9 +343,11 @@ export default {
     border-top: 1px solid #f1f1f1;
     height: 1.4rem;
     overflow-y: auto;
+
     &::-webkit-scrollbar {
       display: none;
     }
+
     scrollbar-width: none;
     -ms-overflow-style: none;
     overscroll-behavior: contain;
@@ -352,9 +367,10 @@ export default {
     width: 0.54rem;
     height: 0.46rem;
     font-size: .20rem;
-    color: $jingdong-green;
+    color: $green-300;
     -webkit-tap-highlight-color: transparent;
   }
+
   .item-img {
     width: 0.46rem;
     height: 0.46rem;
@@ -369,10 +385,12 @@ export default {
     gap: 0.06rem;
     flex-direction: column;
     overflow: hidden;
+
     span {
       text-align: left;
       line-height: 0.2rem;
     }
+
     &__title {
       line-height: 0.2rem;
       height: 0.2rem;
@@ -381,12 +399,14 @@ export default {
       align-items: center;
       @include ellipsis;
     }
+
     &__price {
       height: 0.2rem;
       display: flex;
       align-items: center;
     }
   }
+
   &--disable {
     display: none;
   }
@@ -399,10 +419,12 @@ export default {
   height: 0.2rem;
   display: flex;
   align-items: baseline;
+
   .price-yen {
     font-size: 0.12rem;
   }
 }
+
 .price-origin {
   flex: 1;
   font-size: 0.1rem;
@@ -410,26 +432,31 @@ export default {
   display: flex;
   align-items: baseline;
   color: $placeholder-caret-color;
+
   .price-yen {
     font-size: 0.09rem;
   }
 }
+
 .price-amount {
   width: .68rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   -webkit-tap-highlight-color: transparent;
+
   &__minus {
     font-size: 0.20rem;
-    color: #bbbbbb;
+    color: $gray-300;
   }
+
   &__num {
     font-size: 0.14rem;
   }
+
   &__add {
     font-size: 0.20rem;
-    color: $jingdong-green;
+    color: $green-300;
   }
 }
 </style>

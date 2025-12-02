@@ -52,10 +52,12 @@ export default {
   border-top: 0.01rem solid #f8f8f8;
 
   /* 视觉 */
+  -webkit-tap-highlight-color: transparent;
   background: rgba(255, 255, 255, 0.9);
   color: $content-font-color;
   backdrop-filter: blur(0.15rem);
   -webkit-backdrop-filter: blur(0.15rem); //毛玻璃
+
   &__item {
     /* 布局 */
     display: flex;

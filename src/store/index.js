@@ -13,11 +13,17 @@ const cartStorage = {
   }
 }
 
-const persistencePlugin = (store) => {
-  // 订阅所有 mutations
+// 插件：监听 cartList 相关 mutation 并同步到 localStorage
+const persistencePlugin = store => {
+  const cartMutations = [
+    'changeItem',
+    'chooseCartItem',
+    'clearCart',
+    'selectAll',
+    'addShopName'
+  ]
+
   store.subscribe((mutation, state) => {
-    // 只对 cartList 相关的 mutations 进行持久化
-    const cartMutations = ['changeItem', 'chooseCartItem', 'clearCart', 'selectAll', 'addShopName']
     if (cartMutations.includes(mutation.type)) {
       cartStorage.set(state.cartList)
     }
@@ -28,79 +34,76 @@ export default createStore({
   state: {
     cartList: cartStorage.get()
   },
-  getters: {
-  },
   mutations: {
+    // 修改商品数量
     changeItem (state, payload) {
-      const { shopId, productId, productInfo, num } = payload
+      const { shopId, shopName, productId, productInfo, num } = payload
 
+      // 保证 shopId 存在
       if (!state.cartList[shopId]) {
-        state.cartList[shopId] = { shopName: '', productList: {} }
+        state.cartList[shopId] = { shopName: shopName || '', productList: {} }
+      } else if (shopName && !state.cartList[shopId].shopName) {
+        state.cartList[shopId].shopName = shopName
       }
 
       const shopInfo = state.cartList[shopId]
-      let product = shopInfo.productList[productId]
 
-      if (!product) {
-        product = {
-          ...productInfo,
-          count: 0
-        }
+      // 保证 productId 存在
+      if (!shopInfo.productList[productId]) {
+        shopInfo.productList[productId] = { ...productInfo, count: 0 }
       }
 
+      const product = shopInfo.productList[productId]
       product.count += num
       if (num > 0) product.check = true
       if (product.count < 0) product.count = 0
-
-      shopInfo.productList[productId] = product
     },
+
+    // 勾选/取消勾选商品
     chooseCartItem (state, payload) {
       const { shopId, productId } = payload
-      const cartItem = state.cartList[shopId].productList[productId]
+      const cartItem = state.cartList[shopId]?.productList[productId]
+      if (!cartItem) return
       cartItem.check = !cartItem.check
     },
+
+    // 清空某个店铺购物车
     clearCart (state, payload) {
       const { shopId } = payload
-      state.cartList[shopId].productList = {}
+      if (state.cartList[shopId]) {
+        state.cartList[shopId].productList = {}
+      }
     },
+
+    // 全选/取消全选
     selectAll (state, payload) {
       const { shopId } = payload
-      const products = state.cartList[shopId].productList
-      if (products) {
-        // 检查当前是否已经全选（只统计有数量的商品）
-        const productArray = Object.values(products)
-        const hasProducts = productArray.some(product => product.count > 0)
+      const products = state.cartList[shopId]?.productList
+      if (!products) return
 
-        if (!hasProducts) return // 如果没有商品，直接返回
+      const productArray = Object.values(products)
+      const hasProducts = productArray.some(p => p.count > 0)
+      if (!hasProducts) return
 
-        const isAllSelected = productArray.every(product =>
-          product.count > 0 ? product.check : true // 忽略数量为0的商品
-        )
+      const isAllSelected = productArray.every(p => (p.count > 0 ? p.check : true))
+      const newCheckState = !isAllSelected
 
-        // 取反作为新状态
-        const newCheckState = !isAllSelected
-
-        for (const key in products) {
-          const product = products[key]
-          // 只对数量大于0的商品进行操作
-          if (product.count > 0) {
-            product.check = newCheckState
-          }
+      for (const key in products) {
+        const product = products[key]
+        if (product.count > 0) {
+          product.check = newCheckState
         }
       }
     },
+
+    // 添加店铺名称
     addShopName (state, payload) {
       const { shopId, shopName } = payload
-      const shopInfo = state.cartList[shopId] || {
-        shopName: '', productList: {}
+      if (!state.cartList[shopId]) {
+        state.cartList[shopId] = { shopName: '', productList: {} }
       }
-      shopInfo.shopName = shopName
-      state.cartList[shopId] = shopInfo
+      state.cartList[shopId].shopName = shopName
     }
-  },
-  actions: {
-  },
-  modules: {
   },
   plugins: [persistencePlugin]
 })
