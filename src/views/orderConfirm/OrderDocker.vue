@@ -4,24 +4,28 @@
       <span class="docker__total__text">实付金额：</span>
       <span class="docker__total__num">&yen;{{ totalPrice }}</span>
     </span>
-    <div class="docker__order" @click="showPayConfirm()">提交订单</div>
+    <div class="docker__order" @click="showPayConfirm(totalAmount)">提交订单</div>
   </footer>
   <div class="mask" v-if="payConfirmShow">
     <div class="mask__toast">
       <span class="mask__toast__question">确认要离开收银台？</span>
       <span class="mask__toast__description">请您尽快完成支付，否则订单将被取消</span>
       <div class="mask__toast__btn">
-        <div class="btn-cancel" @click="showPayConfirm()">取消订单</div>
-        <div class="btn-confirm">确认支付</div>
+        <div class="btn-cancel" @click="handlePayOrder(true, totalAmount)">取消订单</div>
+        <div class="btn-confirm" @click="handlePayOrder(false, totalAmount)">确认支付</div>
       </div>
     </div>
   </div>
+  <Toast :message="toastMessage" :show="show" />
 </template>
 
 <script>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+
+import Toast, { toastEffect } from '../../components/Toast.vue'
+import { post } from '../../utils/request.js'
 
 const cartEffect = () => {
   const store = useStore()
@@ -31,34 +35,128 @@ const cartEffect = () => {
 
   const totalPrice = computed(() => {
     const productList = cartList[shopId]?.productList
+
     let count = 0
+
     if (productList) {
       for (const i in productList) {
         const product = productList[i]
         if (product.check) count += product.count * product.price
       }
     }
+
     return Number(count.toFixed(2))
   })
 
-  return { totalPrice }
+  const totalAmount = computed(() => {
+    const productList = cartList[shopId]?.productList
+    let count = 0
+    if (productList) {
+      for (const i in productList) {
+        const product = productList[i]
+        if (product.check) count += product.count
+      }
+    }
+    return count
+  })
+
+  return { totalPrice, totalAmount }
 }
 
-const showPayConfirmEffect = () => {
+const showPayConfirmEffect = (showToast) => {
   const payConfirmShow = ref(false)
-  const showPayConfirm = () => {
+
+  const showPayConfirm = (totalAmount) => {
+    if (totalAmount === 0) {
+      showToast('请先选择商品后再进行支付！')
+      return
+    }
     payConfirmShow.value = !payConfirmShow.value
   }
 
   return { payConfirmShow, showPayConfirm }
 }
 
+const orderConfirmEffect = (showToast, showPayConfirm) => {
+  const store = useStore()
+  const route = useRoute()
+  const router = useRouter()
+  const shopId = route.params.id
+  const cartList = store.state.cartList
+
+  const shopName = computed(() => {
+    return route.query.shopName || store.state.cartList[shopId]?.shopName || ''
+  })
+
+  const productList = computed(() => {
+    const productList = cartList[shopId]?.productList || {}
+    return Object.values(productList).filter(item => item.check)
+  })
+
+  const handlePayOrder = async (isCanceled, totalAmount) => {
+    try {
+      const products = []
+
+      if (isCanceled) {
+        showToast('订单已取消，正在跳转至订单页面')
+        showPayConfirm()
+        setTimeout(() => {
+          router.push({ name: 'Order' })
+        }, 1500)
+        return
+      }
+
+      if (!isCanceled) {
+        for (const i in productList.value) {
+          const product = productList.value[i]
+          if (product.check && product.count > 0) {
+            products.push({
+              id: product._id,
+              count: product.count
+            })
+          }
+        }
+      }
+
+      const result = await post('/api/order', {
+        addressId: 1,
+        shopId,
+        shopName: shopName.value,
+        isCanceled,
+        products
+      })
+
+      if (result?.errno === 0) {
+        showToast('支付成功！即将跳转至订单页面')
+        showPayConfirm()
+        // 清空购物车
+        store.commit('clearCart', { shopId })
+
+        setTimeout(() => {
+          router.push({ name: 'Order' })
+        }, 1500)
+      } else {
+        showToast(result?.message || '支付失败，请重试')
+        showPayConfirm()
+      }
+    } catch (error) {
+      showToast('网络异常，请检查连接后重试！')
+      console.error('支付失败：', error)
+    }
+  }
+  return { handlePayOrder }
+}
+
 export default {
   name: 'OrderDocker',
+  components: { Toast },
   setup () {
-    const { totalPrice } = cartEffect()
-    const { payConfirmShow, showPayConfirm } = showPayConfirmEffect()
-    return { totalPrice, payConfirmShow, showPayConfirm }
+    const { show, toastMessage, showToast } = toastEffect()
+    const { totalPrice, totalAmount } = cartEffect()
+    const { payConfirmShow, showPayConfirm } = showPayConfirmEffect(showToast)
+    const { handlePayOrder } = orderConfirmEffect(showToast, showPayConfirm)
+
+    return { totalPrice, totalAmount, payConfirmShow, showPayConfirm, handlePayOrder, show, toastMessage }
   }
 }
 </script>

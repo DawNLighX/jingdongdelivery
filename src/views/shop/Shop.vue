@@ -61,14 +61,17 @@ export default {
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
 @import "../../style/mixins.scss";
+
 .layout {
   margin: 0 0.18rem;
   background-color: #fff;
 }
+
 .search {
   margin: 0.14rem 0 0.16rem 0;
   height: 0.32rem;
   display: flex;
+
   &__return {
     width: 0.32rem;
     height: 0.32rem;
@@ -81,6 +84,7 @@ export default {
     // 防止文字被选中
     user-select: none;
   }
+
   &__content {
     display: flex;
     flex: 1;
@@ -88,6 +92,7 @@ export default {
     line-height: 0.32rem;
     background-color: $search-background;
     border-radius: .16rem;
+
     &__icon {
       width:.36rem;
       font-size: 0.16rem;
@@ -98,6 +103,7 @@ export default {
       align-items: center;
       justify-content: center;
     }
+
     &__input {
       line-height:.32rem;
       font-size:.14rem;
@@ -122,10 +128,12 @@ export default {
     }
   }
 }
+
 .shop-info-container {
   // 确保占位容器高度与 ShopInfo 一致
   min-height: 0.71rem;
 }
+
 :deep(.shop__content__tags){
   font-weight: 600;
   .shop__content__tag {

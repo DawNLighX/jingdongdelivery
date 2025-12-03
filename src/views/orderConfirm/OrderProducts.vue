@@ -50,7 +50,9 @@ const cartEffect = () => {
     if (productList) {
       for (const i in productList) {
         const product = productList[i]
-        count += product.count
+        if (product.check) {
+          count += product.count
+        }
       }
     }
     return count
@@ -58,7 +60,7 @@ const cartEffect = () => {
 
   const productList = computed(() => {
     const productList = cartList[shopId]?.productList || {}
-    return Object.values(productList)
+    return Object.values(productList).filter(item => item.check)
   })
 
   const shopName = computed(() => {

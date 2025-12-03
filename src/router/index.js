@@ -38,6 +38,11 @@ const routes = [
     path: '/orderConfirm/:id',
     name: 'OrderConfirm',
     component: () => import(/* webpackChunkName: "orderConfirm" */'../views/orderConfirm/OrderConfirm.vue')
+  },
+  {
+    path: '/order',
+    name: 'Order',
+    component: () => import(/* webpackChunkName: "order" */'../views/order/Order.vue')
   }
 ]
 
