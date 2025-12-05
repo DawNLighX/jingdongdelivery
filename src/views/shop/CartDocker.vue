@@ -10,15 +10,13 @@
         ></span>
         <span class="cart-list__top-bar__text">全选</span>
       </div>
-      <span
-        class="cart-list__top-bar__clear"
-        @click="clearCart(shopId)"
-      >清空购物车</span>
+      <span class="cart-list__top-bar__clear" @click="clearCart(shopId)"
+        >清空购物车</span
+      >
     </div>
     <div class="cart-list__scroll-area">
       <div
-        :class="{'info-item':true,
-        'info-item--disable': !(item.count > 0)}"
+        :class="{ 'info-item': true, 'info-item--disable': !(item.count > 0) }"
         v-for="item in productList"
         :key="item._id"
       >
@@ -29,7 +27,7 @@
         >
         </span>
         <span class="item-img">
-          <img :src="item.imgUrl">
+          <img :src="item.imgUrl" />
         </span>
         <span class="item-detail">
           <span class="item-detail__title">{{ item.name }}</span>
@@ -46,25 +44,34 @@
           <span
             class="price-amount__minus iconfont"
             @click="changeItem(shopId, item._id, item, -1)"
-          >&#xe607;</span>
-          <span class="price-amount__num">{{item.count || 0}}</span>
-          <span class="price-amount__add iconfont" @click="changeItem(shopId, item._id, item, 1)">&#xe606;</span>
+            >&#xe607;</span
+          >
+          <span class="price-amount__num">{{ item.count || 0 }}</span>
+          <span
+            class="price-amount__add iconfont"
+            @click="changeItem(shopId, item._id, item, 1)"
+            >&#xe606;</span
+          >
         </span>
       </div>
     </div>
   </div>
   <footer class="docker">
     <div class="docker__cart">
-      <div class="docker__cart__icon iconfont" @click="showCart()">&#xe636;</div>
-      <div class="docker__cart__amount">{{totalAmount}}</div>
+      <div class="docker__cart__icon iconfont" @click="showCart()">
+        &#xe636;
+      </div>
+      <div class="docker__cart__amount">{{ totalAmount }}</div>
     </div>
     <span class="docker__total">
       <span class="docker__total__text">总计：</span>
-      <span class="docker__total__num">&yen;{{totalPrice}}</span>
+      <span class="docker__total__num">&yen;{{ totalPrice }}</span>
       <span class="docker__total__textDeli">免基础运费</span>
     </span>
     <div class="docker__order">
-      <router-link :to="{ path: `/orderConfirm/${shopId}`, query: { shopName } }">
+      <router-link
+        :to="{ path: `/orderConfirm/${shopId}`, query: { shopName } }"
+      >
         去结算
       </router-link>
     </div>
@@ -88,7 +95,9 @@ const cartEffect = () => {
     if (productList) {
       for (const i in productList) {
         const product = productList[i]
-        count += product.count
+        if (product.check) {
+          count += product.count
+        }
       }
     }
     return count
@@ -100,15 +109,16 @@ const cartEffect = () => {
     if (productList) {
       for (const i in productList) {
         const product = productList[i]
-        if (product.check) count += (product.count * product.price)
+        if (product.check) count += product.count * product.price
       }
     }
+
     return Number(count.toFixed(2))
   })
 
   const productList = computed(() => {
     const productList = cartList[shopId]?.productList || {}
-    return Object.values(productList)
+    return Object.values(productList).filter(item => item.check)
   })
 
   const allSelected = computed(() => {
@@ -116,11 +126,11 @@ const cartEffect = () => {
     if (!productList) return false
 
     const productArray = Object.values(productList)
-    const validProducts = productArray.filter(product => product.count > 0)
+    const validProducts = productArray.filter((product) => product.count > 0)
 
     if (validProducts.length === 0) return false // 没有有效商品时返回false
 
-    return validProducts.every(product => product.check)
+    return validProducts.every((product) => product.check)
   })
 
   const changeItem = (shopId, productId, productInfo, num) => {
@@ -139,7 +149,18 @@ const cartEffect = () => {
     store.commit('selectAll', { shopId })
   }
 
-  return { totalAmount, totalPrice, productList, shopId, cartList, allSelected, changeItem, chooseCartItem, clearCart, selectAll }
+  return {
+    totalAmount,
+    totalPrice,
+    productList,
+    shopId,
+    cartList,
+    allSelected,
+    changeItem,
+    chooseCartItem,
+    clearCart,
+    selectAll
+  }
 }
 
 const showCartEffect = () => {
@@ -155,7 +176,18 @@ export default {
   name: 'CartDocker',
   props: ['shopName'],
   setup () {
-    const { totalAmount, totalPrice, productList, shopId, cartList, allSelected, changeItem, chooseCartItem, clearCart, selectAll } = cartEffect()
+    const {
+      totalAmount,
+      totalPrice,
+      productList,
+      shopId,
+      cartList,
+      allSelected,
+      changeItem,
+      chooseCartItem,
+      clearCart,
+      selectAll
+    } = cartEffect()
     const { cartShow, showCart } = showCartEffect()
     return {
       totalAmount,
@@ -209,7 +241,7 @@ export default {
 
   /* 视觉 */
   -webkit-tap-highlight-color: transparent;
-  border-top: 1px solid #f1f1f1;
+  border-top: 0.01rem solid #f1f1f1;
   background-color: rgba(255, 255, 255, 0.9);
   color: $content-font-color;
   backdrop-filter: blur(0.15rem);
@@ -292,7 +324,7 @@ export default {
 
 .cart-list {
   position: fixed;
-  bottom: .50rem;
+  bottom: 0.5rem;
   left: 0;
   z-index: 500;
 
@@ -308,9 +340,9 @@ export default {
   &__top-bar {
     display: flex;
     gap: 2.13rem;
-    line-height: .52rem;
-    height: .52rem;
-    font-size: .14rem;
+    line-height: 0.52rem;
+    height: 0.52rem;
+    font-size: 0.14rem;
 
     &__all {
       display: flex;
@@ -318,29 +350,29 @@ export default {
       margin-left: 0.18rem;
 
       span {
-      line-height: .52rem;
-      height: .52rem;
+        line-height: 0.52rem;
+        height: 0.52rem;
       }
     }
 
     &__clear {
       flex: 1;
       text-align: right;
-      margin-right: .18rem;
+      margin-right: 0.18rem;
     }
 
     &__icon {
-      font-size: .20rem;
+      font-size: 0.2rem;
       color: $green-300;
     }
 
     &__text {
-      margin-left: .08rem;
+      margin-left: 0.08rem;
     }
   }
 
   &__scroll-area {
-    border-top: 1px solid #f1f1f1;
+    border-top: 0.01px solid #f1f1f1;
     height: 1.4rem;
     overflow-y: auto;
 
@@ -363,10 +395,10 @@ export default {
   padding: 0;
   margin: 0.16rem 0.18rem 0.16rem 0rem;
 
-  .item-check{
+  .item-check {
     width: 0.54rem;
     height: 0.46rem;
-    font-size: .20rem;
+    font-size: 0.2rem;
     color: $green-300;
     -webkit-tap-highlight-color: transparent;
   }
@@ -439,14 +471,14 @@ export default {
 }
 
 .price-amount {
-  width: .68rem;
+  width: 0.68rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   -webkit-tap-highlight-color: transparent;
 
   &__minus {
-    font-size: 0.20rem;
+    font-size: 0.2rem;
     color: $gray-300;
   }
 
@@ -455,7 +487,7 @@ export default {
   }
 
   &__add {
-    font-size: 0.20rem;
+    font-size: 0.2rem;
     color: $green-300;
   }
 }

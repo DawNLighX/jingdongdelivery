@@ -61,7 +61,7 @@ a {
 }
 
 .shopInfo-margin {
-  height: .71rem;
+  height: 0.71rem;
   padding: 0.12rem 0;
   position: relative;
 }

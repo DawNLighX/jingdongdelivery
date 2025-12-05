@@ -3,43 +3,27 @@
     <StaticPart></StaticPart>
     <NearbyStores></NearbyStores>
   </div>
-  <Docker></Docker>
+  <MainDocker></MainDocker>
 </template>
 
 <script>
-import Docker from './Docker.vue'
+import MainDocker from '../../components/MainDocker.vue'
 import NearbyStores from './NearbyStores.vue'
 import StaticPart from './StaticPart.vue'
 
 export default {
   name: 'Home',
   components: {
-    StaticPart, NearbyStores, Docker
-  },
-  data () {
-    return {
-      scrollPosition: 0 // 保存滚动位置
-    }
-  },
-  activated () {
-    // 从商家页面返回时恢复滚动位置
-    this.$nextTick(() => {
-      window.scrollTo(0, this.scrollPosition)
-    })
-  },
-  beforeRouteLeave (to, from, next) {
-    // 点击商家时保存当前位置
-    if (to.name === 'Shop') {
-      this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop
-    }
-    next()
+    StaticPart, NearbyStores, MainDocker
   },
   mounted () {
-    // 组件挂载时也恢复位置（防止刷新后丢失）
+    // 强制滚动到顶部
+    window.scrollTo(0, 0)
+  },
+  activated () {
+    // 每次激活时都滚动到顶部
     this.$nextTick(() => {
-      if (this.scrollPosition > 0) {
-        window.scrollTo(0, this.scrollPosition)
-      }
+      window.scrollTo(0, 0)
     })
   }
 }

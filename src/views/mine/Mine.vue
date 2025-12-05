@@ -6,7 +6,7 @@
 import MainDocker from '../../components/MainDocker.vue'
 
 export default {
-  name: 'Cart',
+  name: 'Mine',
   components: {
     MainDocker
   }

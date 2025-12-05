@@ -88,7 +88,7 @@ const listEffect = (currentTab, shopId) => {
   watchEffect(() => {
     getProductData()
   })
-  const { productList } = toRefs(data)
+  const { productList } = toRefs(data) // 保证数据的响应式连接
   return { productList, shopId }
 }
 
@@ -203,6 +203,10 @@ export default {
     width: 0.68rem;
     height: 0.68rem;
     background-color: $search-background;
+    img {
+      width: 0.68rem;
+      height: 0.68rem;
+    }
   }
 
   .item-detail {
@@ -269,7 +273,7 @@ export default {
   }
 }
 .price-amount {
-  width: .68rem;
+  width: 0.68rem;
   display: flex;
   align-items: center;
   justify-content: space-between;

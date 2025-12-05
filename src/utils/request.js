@@ -18,7 +18,7 @@ export const get = (url, params = {}) => {
 
 export const post = (url, data = {}) => {
   return new Promise((resolve, reject) => {
-    instance.post(url, data, {
+    instance.post(url, JSON.stringify(data), {
       headers: {
         'Content-Type': 'application/json'
       }

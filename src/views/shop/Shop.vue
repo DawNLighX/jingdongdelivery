@@ -3,16 +3,19 @@
     <div class="search">
       <div class="search__return iconfont" @click="handleGoBack">&#xe66a;</div>
       <div class="search__content">
-        <span class="search__content__icon iconfont" >&#xe62b;</span>
-        <input class="search__content__input" placeholder="请输入商品名称搜索"/>
+        <span class="search__content__icon iconfont">&#xe62b;</span>
+        <input
+          class="search__content__input"
+          placeholder="请输入商品名称搜索"
+        />
       </div>
     </div>
-    <div class='shop-info-container'>
+    <div class="shop-info-container">
       <ShopInfo :item="item" :hideBorder="true" v-show="item.imgUrl" />
     </div>
   </div>
-  <Product :shopName="item.name"/>
-  <CartDocker :shopName="item.name"/>
+  <Product :shopName="item.name" />
+  <CartDocker :shopName="item.name" />
 </template>
 
 <script>
@@ -76,7 +79,7 @@ export default {
     width: 0.32rem;
     height: 0.32rem;
     line-height: 0.32rem;
-    font-size:.25rem;
+    font-size: 0.25rem;
     color: #666666;
 
     // 移除点击高亮效果
@@ -91,22 +94,22 @@ export default {
     align-items: center;
     line-height: 0.32rem;
     background-color: $search-background;
-    border-radius: .16rem;
+    border-radius: 0.16rem;
 
     &__icon {
-      width:.36rem;
+      width: 0.36rem;
       font-size: 0.16rem;
       margin-left: 0.04rem;
       text-align: center;
-      color: #B7B7B7;
+      color: #b7b7b7;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     &__input {
-      line-height:.32rem;
-      font-size:.14rem;
+      line-height: 0.32rem;
+      font-size: 0.14rem;
       color: $content-font-color;
       width: 2.4rem;
       padding-right: 0.2rem;
@@ -119,7 +122,7 @@ export default {
       -webkit-tap-highlight-color: transparent;
       // 保持统一样式
       -webkit-appearance: none;
-      -moz-appearance: none;    // Firefox
+      -moz-appearance: none; // Firefox
       appearance: none;
       // 确保输入框内容垂直居中
       height: 100%;
@@ -134,7 +137,7 @@ export default {
   min-height: 0.71rem;
 }
 
-:deep(.shop__content__tags){
+:deep(.shop__content__tags) {
   font-weight: 600;
   .shop__content__tag {
     color: $content-font-color;

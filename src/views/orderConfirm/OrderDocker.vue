@@ -35,9 +35,7 @@ const cartEffect = () => {
 
   const totalPrice = computed(() => {
     const productList = cartList[shopId]?.productList
-
     let count = 0
-
     if (productList) {
       for (const i in productList) {
         const product = productList[i]
@@ -185,7 +183,7 @@ export default {
 
   /* 视觉 */
   -webkit-tap-highlight-color: transparent;
-  border-top: 1px solid #f1f1f1;
+  border-top: 0.01rem solid #f1f1f1;
   background-color: rgba(255, 255, 255, 0.9);
   color: $content-font-color;
   backdrop-filter: blur(0.15rem);
@@ -268,7 +266,7 @@ export default {
     &__btn {
       display: flex;
       justify-content: center;
-      gap:0.24rem;
+      gap: 0.24rem;
       text-align: center;
       height: 0.32rem;
 
@@ -277,8 +275,8 @@ export default {
         height: 0.32rem;
         line-height: 0.32rem;
         font-size: 0.14rem;
-        border-radius: .16rem;
-        border: 1px solid $green-500;
+        border-radius: 0.16rem;
+        border: 0.01rem solid $green-500;
         text-align: center;
         -webkit-tap-highlight-color: transparent;
       }

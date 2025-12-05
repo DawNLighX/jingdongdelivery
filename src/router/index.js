@@ -43,6 +43,11 @@ const routes = [
     path: '/order',
     name: 'Order',
     component: () => import(/* webpackChunkName: "order" */'../views/order/Order.vue')
+  },
+  {
+    path: '/mine',
+    name: 'Mine',
+    component: () => import(/* webpackChunkName: "mine" */'../views/mine/Mine.vue')
   }
 ]
 
