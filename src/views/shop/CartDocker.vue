@@ -372,7 +372,7 @@ export default {
   }
 
   &__scroll-area {
-    border-top: 0.01px solid #f1f1f1;
+    border-top: 0.01rem solid #f1f1f1;
     height: 1.4rem;
     overflow-y: auto;
 

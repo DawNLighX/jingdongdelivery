@@ -27,27 +27,37 @@ const routes = [
   {
     path: '/shop/:id',
     name: 'Shop',
-    component: () => import(/* webpackChunkName: "shop" */'../views/shop/Shop.vue')
+    component: () => import(/* webpackChunkName: "shop" */'../views/shop/Shop')
   },
   {
     path: '/cart',
     name: 'Cart',
-    component: () => import(/* webpackChunkName: "cart" */'../views/cart/Cart.vue')
+    component: () => import(/* webpackChunkName: "cart" */'../views/cart/Cart')
   },
   {
     path: '/orderConfirm/:id',
     name: 'OrderConfirm',
-    component: () => import(/* webpackChunkName: "orderConfirm" */'../views/orderConfirm/OrderConfirm.vue')
+    component: () => import(/* webpackChunkName: "orderConfirm" */'../views/orderConfirm/OrderConfirm')
   },
   {
     path: '/order',
     name: 'Order',
-    component: () => import(/* webpackChunkName: "order" */'../views/order/Order.vue')
+    component: () => import(/* webpackChunkName: "order" */'../views/order/Order')
   },
   {
     path: '/mine',
     name: 'Mine',
-    component: () => import(/* webpackChunkName: "mine" */'../views/mine/Mine.vue')
+    component: () => import(/* webpackChunkName: "mine" */'../views/mine/Mine')
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import(/* webpackChunkName: "search" */'../views/search/Search')
+  },
+  {
+    path: '/searchList',
+    name: 'SearchList',
+    component: () => import(/* webpackChunkName: "searchList" */'../views/searchList/SearchList')
   }
 ]
 

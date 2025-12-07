@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import MainDocker from '../../components/MainDocker.vue'
-import NearbyStores from './NearbyStores.vue'
-import StaticPart from './StaticPart.vue'
+import MainDocker from '../../components/MainDocker'
+import NearbyStores from './NearbyStores'
+import StaticPart from './StaticPart'
 
 export default {
   name: 'Home',

@@ -135,6 +135,11 @@ export default {
     height: 0.46rem;
     margin-right: 0.16rem;
     background-color: $search-background;
+
+    img {
+      width: 100%;
+      height: 100%
+    }
   }
 
   .item-detail {

@@ -143,6 +143,7 @@ export default {
       font-size: 0.16rem;
       font-weight: 600;
       width: 1rem;
+      @include ellipsis;
     }
 
     &__order-id {
@@ -150,10 +151,11 @@ export default {
       height: 0.22rem;
       font-size: 0.12rem;
       color: #999999;
-      margin-right: 0.16rem;
+      width: 1.42rem;
     }
 
     &__status {
+      width: 0.42rem;
       line-height: 0.22rem;
       height: 0.22rem;
       font-size: 0.14rem;

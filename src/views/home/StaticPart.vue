@@ -5,10 +5,10 @@
     <div class="position__icon position__icon--notice iconfont">&#xe637;</div>
   </header>
 
-  <search class="search" role="search">
+  <div class="search" @click="handleToSearch()">
     <span class="search__icon iconfont">&#xe62b;</span>
-    <span class="search__input"><input type="text" /></span>
-  </search>
+    <span class="search__input"><input type="search" placeholder="双十一大牌免运费，购物仅需9折起"/></span>
+  </div>
 
   <div class="banner"><img src="../../assets/images/banner.jpg" /></div>
 
@@ -27,9 +27,13 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router'
+
 export default {
   name: 'StaticPart',
   setup () {
+    const router = useRouter()
+
     const iconsList = [
       {
         text: '超市便利',
@@ -72,7 +76,12 @@ export default {
         imgUrl: require('@/assets/icons/红包@2x.png')
       }
     ]
-    return { iconsList }
+
+    const handleToSearch = () => {
+      router.push('/search')
+    }
+
+    return { iconsList, handleToSearch }
   }
 }
 </script>
@@ -130,18 +139,16 @@ export default {
   border: none;
 
   .search__icon {
-    /* 布局 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     /* 文本 */
     font-size: 0.18rem;
     color: $placeholder-caret-color;
 
     /* 盒模型 */
-    margin-right: 0.12rem;
-    line-height: 1;
+    width: 0.25rem;
+    margin-right: 0.08rem;
+    line-height: 0.32rem;
+    height: 0.32rem;
+    text-align: center;
   }
 
   .search__input {

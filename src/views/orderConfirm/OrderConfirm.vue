@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import OrderHeader from './OrderHeader.vue'
-import OrderDocker from './OrderDocker.vue'
-import OrderProducts from './OrderProducts.vue'
+import OrderHeader from './OrderHeader'
+import OrderDocker from './OrderDocker'
+import OrderProducts from './OrderProducts'
 
 export default {
   name: 'OrderConfirm',

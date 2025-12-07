@@ -7,6 +7,7 @@
         <input
           class="search__content__input"
           placeholder="请输入商品名称搜索"
+          type="search"
         />
       </div>
     </div>
@@ -22,9 +23,9 @@
 import { useRouter, useRoute } from 'vue-router'
 import { reactive, toRefs } from 'vue'
 import { get } from '../../utils/request'
-import ShopInfo from '../../components/ShopInfo.vue'
-import Product from './Product.vue'
-import CartDocker from './CartDocker.vue'
+import ShopInfo from '../../components/ShopInfo'
+import Product from './Product'
+import CartDocker from './CartDocker'
 
 const shopInfoEffect = () => {
   const route = useRoute()
