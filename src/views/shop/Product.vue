@@ -29,15 +29,19 @@
               ><span class="price-yen">&yen;</span>{{ item.oldPrice }}</span
             >
             <span class="price-amount">
-              <span :class="{'price-amount__minus':true,
-              'price-amount__minus--disable':cartList?.[shopId]?.productList?.[item._id]?.count > 0 ? true : false,
-              'iconfont':true}"
-              @click="changeItem(shopId, shopName, item._id, item, -1)"
+              <span :class="{
+                'price-amount__minus':true,
+                'price-amount__minus--disable':cartList?.[shopId]?.productList?.[item._id]?.count > 0 ? true : false,
+                'iconfont':true}"
+                @click="changeItem(shopId, shopName, item._id, item, -1)"
               >&#xe607;</span>
-              <span :class="{'price-amount__num':true,
+              <span :class="{
+                'price-amount__num':true,
                 'price-amount__num--disable':cartList?.[shopId]?.productList?.[item._id]?.count > 0 ? true : false}"
               >{{cartList?.[shopId]?.productList?.[item._id]?.count || 0}}</span>
-              <span class="price-amount__add iconfont" @click="changeItem(shopId, shopName, item._id, item, 1)">&#xe606;</span>
+              <span class="price-amount__add iconfont"
+                @click="changeItem(shopId, shopName, item._id, item, 1)"
+              >&#xe606;</span>
             </span>
           </span>
         </span>
@@ -50,7 +54,7 @@
 import { get } from '../../utils/request'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { reactive, ref, toRefs, watchEffect, onMounted } from 'vue'
+import { reactive, ref, toRefs, watchEffect } from 'vue'
 
 const cats = [
   {
@@ -115,11 +119,14 @@ export default {
     const { productList } = listEffect(currentTab, shopId)
     const { cartList, changeItem, addShopName } = cartEffect()
     // const { productList } = toRefs(data)
-    onMounted(() => {
-      addShopName(shopId, props.shopName)
-    })
+    // onMounted(() => {
+    //   addShopName(shopId, props.shopName)
+    // })
+    const handleChangeItem = (shopId, shopName, productId, productInfo, num) => {
+      changeItem(shopId, shopName, productId, productInfo, num)
+    }
 
-    return { cats, productList, currentTab, cartList, shopId, handelCatsClick, changeItem, addShopName }
+    return { cats, productList, currentTab, cartList, shopId, handelCatsClick, changeItem: handleChangeItem, addShopName }
   }
 }
 </script>

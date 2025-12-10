@@ -4,35 +4,54 @@
       <span class="docker__total__text">实付金额：</span>
       <span class="docker__total__num">&yen;{{ totalPrice }}</span>
     </span>
-    <div class="docker__order" @click="showPayConfirm(totalAmount)">提交订单</div>
+    <div class="docker__order" @click="handleSubmitOrder">提交订单</div>
   </footer>
+
+  <!-- 支付确认弹窗 -->
   <div class="mask" v-if="payConfirmShow">
     <div class="mask__toast">
-      <span class="mask__toast__question">确认要离开收银台？</span>
-      <span class="mask__toast__description">请您尽快完成支付，否则订单将被取消</span>
+      <span class="mask__toast__question">确认支付？</span>
+      <span class="mask__toast__description">
+        订单有效期<span class="countdown">{{ countdown }}</span>分钟，请及时完成支付
+      </span>
       <div class="mask__toast__btn">
-        <div class="btn-cancel" @click="handlePayOrder(true, totalAmount)">取消订单</div>
-        <div class="btn-confirm" @click="handlePayOrder(false, totalAmount)">确认支付</div>
+        <div class="btn-cancel" @click="closePayConfirm">再想想</div>
+        <div class="btn-confirm" @click="handlePayOrder">确认支付</div>
       </div>
     </div>
   </div>
+
+  <!-- 订单取消弹窗（独立出来） -->
+  <div class="mask" v-if="cancelConfirmShow">
+    <div class="mask__toast">
+      <span class="mask__toast__question">确定要取消订单？</span>
+      <span class="mask__toast__description">取消后需要重新下单哦</span>
+      <div class="mask__toast__btn">
+        <div class="btn-cancel" @click="cancelConfirmShow = false">继续支付</div>
+        <div class="btn-confirm" @click="handleCancelOrder">确定取消</div>
+      </div>
+    </div>
+  </div>
+
   <Toast :message="toastMessage" :show="show" />
 </template>
 
 <script>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, ref } from 'vue'
+import { computed, ref, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 
 import Toast, { toastEffect } from '../../components/Toast.vue'
 import { post } from '../../utils/request.js'
 
+// 购物车相关计算逻辑
 const cartEffect = () => {
   const store = useStore()
   const route = useRoute()
   const shopId = route.params.id
   const cartList = store.state.cartList
 
+  // 计算总价
   const totalPrice = computed(() => {
     const productList = cartList[shopId]?.productList
     let count = 0
@@ -42,10 +61,10 @@ const cartEffect = () => {
         if (product.check) count += product.count * product.price
       }
     }
-
     return Number(count.toFixed(2))
   })
 
+  // 计算总数量
   const totalAmount = computed(() => {
     const productList = cartList[shopId]?.productList
     let count = 0
@@ -58,103 +77,228 @@ const cartEffect = () => {
     return count
   })
 
-  return { totalPrice, totalAmount }
+  // 获取选中的商品列表
+  const selectedProducts = computed(() => {
+    const productList = cartList[shopId]?.productList || {}
+    return Object.values(productList).filter(item => item.check && item.count > 0)
+  })
+
+  return { totalPrice, totalAmount, selectedProducts }
 }
 
-const showPayConfirmEffect = (showToast) => {
+// 支付确认弹窗逻辑
+const usePayConfirm = (showToast, totalAmount) => {
   const payConfirmShow = ref(false)
+  const cancelConfirmShow = ref(false)
+  const countdown = ref(30) // 30分钟倒计时
 
-  const showPayConfirm = (totalAmount) => {
-    if (totalAmount === 0) {
+  let timer = null
+
+  // 提交订单点击事件
+  const handleSubmitOrder = () => {
+    if (totalAmount.value === 0) {
       showToast('请先选择商品后再进行支付！')
       return
     }
-    payConfirmShow.value = !payConfirmShow.value
+    payConfirmShow.value = true
+    startCountdown()
   }
 
-  return { payConfirmShow, showPayConfirm }
+  // 关闭支付确认
+  const closePayConfirm = () => {
+    payConfirmShow.value = false
+    stopCountdown()
+  }
+
+  // 开始倒计时
+  const startCountdown = () => {
+    countdown.value = 30
+    timer = setInterval(() => {
+      if (countdown.value > 0) {
+        countdown.value--
+      } else {
+        // 超时自动关闭
+        closePayConfirm()
+        showToast('订单已超时，请重新下单')
+      }
+    }, 60000) // 每分钟更新一次
+  }
+
+  // 停止倒计时
+  const stopCountdown = () => {
+    if (timer) {
+      clearInterval(timer)
+      timer = null
+    }
+  }
+
+  // 显示取消订单确认
+  const showCancelConfirm = () => {
+    payConfirmShow.value = false
+    cancelConfirmShow.value = true
+  }
+
+  // 组件卸载时清理定时器
+  onUnmounted(() => {
+    stopCountdown()
+  })
+
+  return {
+    payConfirmShow,
+    cancelConfirmShow,
+    countdown,
+    handleSubmitOrder,
+    closePayConfirm,
+    showCancelConfirm,
+    stopCountdown
+  }
 }
 
-const orderConfirmEffect = (showToast, showPayConfirm) => {
+// 订单处理逻辑
+const useOrderHandler = (showToast, shopId, selectedProducts, shopName) => {
   const store = useStore()
-  const route = useRoute()
   const router = useRouter()
-  const shopId = route.params.id
-  const cartList = store.state.cartList
 
-  const shopName = computed(() => {
-    return route.query.shopName || store.state.cartList[shopId]?.shopName || ''
-  })
-
-  const productList = computed(() => {
-    const productList = cartList[shopId]?.productList || {}
-    return Object.values(productList).filter(item => item.check)
-  })
-
-  const handlePayOrder = async (isCanceled, totalAmount) => {
+  // 支付订单
+  const handlePayOrder = async () => {
     try {
-      const products = []
-
-      if (isCanceled) {
-        showToast('订单已取消，正在跳转至订单页面')
-        showPayConfirm()
-        setTimeout(() => {
-          router.push({ name: 'Order' })
-        }, 1500)
+      if (selectedProducts.value.length === 0) {
+        showToast('没有选中的商品')
         return
       }
 
-      if (!isCanceled) {
-        for (const i in productList.value) {
-          const product = productList.value[i]
-          if (product.check && product.count > 0) {
-            products.push({
-              id: product._id,
-              count: product.count
-            })
-          }
-        }
-      }
+      const products = selectedProducts.value.map(product => ({
+        id: product._id,
+        count: product.count,
+        price: product.price,
+        name: product.name,
+        imgUrl: product.imgUrl
+      }))
+
+      // 计算总价
+      const totalPrice = selectedProducts.value.reduce(
+        (sum, product) => sum + product.price * product.count, 0
+      ).toFixed(2)
 
       const result = await post('/api/order', {
-        addressId: 1,
+        addressId: 1, // 这里应该从地址管理获取真实地址ID
         shopId,
         shopName: shopName.value,
-        isCanceled,
-        products
+        products,
+        totalPrice,
+        orderTime: new Date().toISOString()
       })
 
       if (result?.errno === 0) {
         showToast('支付成功！即将跳转至订单页面')
-        showPayConfirm()
-        // 清空购物车
-        store.commit('clearCart', { shopId })
+
+        // 只清除已购买的商品，保留未选中的
+        clearPurchasedItems(shopId, selectedProducts.value)
 
         setTimeout(() => {
-          router.push({ name: 'Order' })
+          router.push({
+            name: 'Order',
+            query: {
+              orderId: result.data?.orderId,
+              from: 'payment'
+            }
+          })
         }, 1500)
       } else {
         showToast(result?.message || '支付失败，请重试')
-        showPayConfirm()
       }
     } catch (error) {
       showToast('网络异常，请检查连接后重试！')
       console.error('支付失败：', error)
     }
   }
-  return { handlePayOrder }
+
+  // 取消订单
+  const handleCancelOrder = () => {
+    showToast('订单已取消')
+    setTimeout(() => {
+      router.push({ name: 'Home' }) // 返回首页
+    }, 1500)
+  }
+
+  // 只清除已购买的商品
+  const clearPurchasedItems = (shopId, purchasedProducts) => {
+    const cartList = JSON.parse(localStorage.cartList || '{}')
+
+    if (cartList[shopId]?.productList) {
+      purchasedProducts.forEach(product => {
+        delete cartList[shopId].productList[product._id]
+      })
+
+      // 如果该店铺购物车已空，删除整个店铺
+      if (Object.keys(cartList[shopId].productList).length === 0) {
+        delete cartList[shopId]
+      }
+
+      localStorage.cartList = JSON.stringify(cartList)
+
+      // 更新 Vuex store
+      store.commit('clearPurchasedItems', {
+        shopId,
+        productIds: purchasedProducts.map(p => p._id)
+      })
+    }
+  }
+
+  return { handlePayOrder, handleCancelOrder }
 }
 
 export default {
   name: 'OrderDocker',
   components: { Toast },
   setup () {
-    const { show, toastMessage, showToast } = toastEffect()
-    const { totalPrice, totalAmount } = cartEffect()
-    const { payConfirmShow, showPayConfirm } = showPayConfirmEffect(showToast)
-    const { handlePayOrder } = orderConfirmEffect(showToast, showPayConfirm)
+    const route = useRoute()
+    const shopId = route.params.id
 
-    return { totalPrice, totalAmount, payConfirmShow, showPayConfirm, handlePayOrder, show, toastMessage }
+    // 获取店铺名称
+    const shopName = computed(() => {
+      const store = useStore()
+      return route.query.shopName || store.state.cartList[shopId]?.shopName || '未知店铺'
+    })
+
+    // Toast 相关
+    const { show, toastMessage, showToast } = toastEffect()
+
+    // 购物车计算
+    const { totalPrice, totalAmount, selectedProducts } = cartEffect()
+
+    // 支付确认弹窗
+    const {
+      payConfirmShow,
+      cancelConfirmShow,
+      countdown,
+      handleSubmitOrder,
+      closePayConfirm,
+      showCancelConfirm
+    } = usePayConfirm(showToast, totalAmount)
+
+    // 订单处理
+    const { handlePayOrder, handleCancelOrder } = useOrderHandler(
+      showToast,
+      shopId,
+      selectedProducts,
+      shopName
+    )
+
+    return {
+      totalPrice,
+      totalAmount,
+      payConfirmShow,
+      cancelConfirmShow,
+      countdown,
+      handleSubmitOrder,
+      handlePayOrder,
+      handleCancelOrder,
+      closePayConfirm,
+      showCancelConfirm,
+      show,
+      toastMessage
+    }
   }
 }
 </script>
@@ -219,6 +363,10 @@ export default {
     font-size: 0.14rem;
     color: #ffffff;
     background-color: $color-docker;
+
+    &:active {
+      opacity: 0.9;
+    }
   }
 }
 
@@ -240,9 +388,11 @@ export default {
     height: 1.57rem;
     border-radius: 0.06rem;
     background: #FFFFFF;
+    box-shadow: 0 0.04rem 0.16rem rgba(0, 0, 0, 0.15);
 
     display: flex;
     flex-direction: column;
+    align-items: center;
 
     &__question {
       margin-top: 0.24rem;
@@ -251,6 +401,7 @@ export default {
       height: 0.25rem;
       line-height: 0.25rem;
       color: $content-font-color;
+      font-weight: 500;
     }
 
     &__description {
@@ -261,6 +412,12 @@ export default {
       height: 0.2rem;
       line-height: 0.2rem;
       color: #666666;
+
+      .countdown {
+        color: $jingdong-red;
+        font-weight: 600;
+        margin: 0 0.02rem;
+      }
     }
 
     &__btn {
@@ -269,9 +426,10 @@ export default {
       gap: 0.24rem;
       text-align: center;
       height: 0.32rem;
+      width: 100%;
 
       div {
-        width: 0.8rem;
+        width: 1rem;
         height: 0.32rem;
         line-height: 0.32rem;
         font-size: 0.14rem;
@@ -279,15 +437,30 @@ export default {
         border: 0.01rem solid $green-500;
         text-align: center;
         -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:active {
+          transform: scale(0.98);
+        }
       }
 
-      .btn-cancel{
+      .btn-cancel {
         color: $green-500;
+        background: #FFFFFF;
+
+        &:active {
+          background: rgba($green-500, 0.1);
+        }
       }
 
-      .btn-confirm{
-        color:#ffffff;
+      .btn-confirm {
+        color: #ffffff;
         background: $green-500;
+
+        &:active {
+          background: darken($green-500, 10%);
+        }
       }
     }
   }

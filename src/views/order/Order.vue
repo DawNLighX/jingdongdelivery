@@ -1,6 +1,13 @@
 <template>
   <header class="header">我的订单</header>
   <div class="layout">
+    <div class="empty-order" v-if="isEmpty">
+      <div class="empty-order__icon">📦</div>
+      <p class="empty-order__text">您还没有订单哦</p>
+      <p class="empty-order__subtext">快去下单体验吧~</p>
+      <button class="empty-order__btn" @click="goShopping">去购物</button>
+    </div>
+
     <div class="order-item" v-for="(item, index) in list" :key="index">
       <div class="order-item__header">
         <span class="order-item__header__shop-name">{{ item.shopName }}</span>
@@ -30,28 +37,38 @@
 <script>
 import MainDocker from '../../components/MainDocker.vue'
 import { get } from '../../utils/request'
-import { reactive, toRefs } from 'vue'
+import { computed, reactive, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 
 const useOrderListEffect = () => {
   const data = reactive({ list: [] })
 
   const getOrderList = async () => {
-    const result = await get('api/order')
-    if (result?.errno === 0 && result?.data?.length) {
-      const orderList = result.data
-      orderList.forEach((order) => {
-        const products = order.products || []
-        let totalPrice = 0
-        let totalAmount = 0
-        products.forEach((productItem) => {
-          totalPrice += productItem?.product.price * productItem?.orderSales || 0
-          totalAmount += productItem?.orderSales || 0
+    try {
+      const result = await get('api/order')
+      if (result?.errno === 0 && result?.data?.length) {
+        const orderList = result.data
+        orderList.forEach((order) => {
+          const products = order.products || []
+          let totalPrice = 0
+          let totalAmount = 0
+          products.forEach((productItem) => {
+            totalPrice += productItem?.product.price * productItem?.orderSales || 0
+            totalAmount += productItem?.orderSales || 0
+          })
+          order.totalPrice = (totalPrice).toFixed(2)
+          order.totalAmount = totalAmount
         })
-        order.totalPrice = (totalPrice).toFixed(2)
-        order.totalAmount = totalAmount
-      })
-
-      data.list = result.data
+        data.list = result.data
+      } else {
+        // 如果没有数据，设置空数组
+        data.list = []
+      }
+    } catch (error) {
+      data.error = error.message
+      data.list = [] // 出错时也设置为空
+    } finally {
+      data.loading = false
     }
   }
   getOrderList()
@@ -66,9 +83,19 @@ export default {
     MainDocker
   },
   setup () {
+    const router = useRouter()
     const { list, totalPrice } = useOrderListEffect()
-    console.log('订单数据：', list)
-    return { list, totalPrice }
+    // 判断是否为空
+    const isEmpty = computed(() => {
+      return !list.value || list.value.length === 0
+    })
+
+    // 去购物按钮事件
+    const goShopping = () => {
+      router.push('/')
+    }
+
+    return { list, totalPrice, isEmpty, goShopping }
   },
   mounted () {
     // 强制滚动到顶部
@@ -93,7 +120,7 @@ export default {
   left: 0;
   right: 0;
   top: 0;
-  height: 100vh;
+  min-height: calc(100vh - 1.1rem);
 
   background-color: #f5f5f5;
 
@@ -119,6 +146,54 @@ export default {
   font-size: 0.16rem;
   color: $content-font-color;
   z-index: 1000;
+}
+
+.empty-order {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
+  min-height: calc(100vh - 1.1rem - 1.2rem);
+
+  &__icon {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+    opacity: 0.5;
+  }
+
+  &__text {
+    font-size: 0.16rem;
+    color: #999;
+    margin-bottom: 0.1rem; // 与购物车保持一致
+  }
+
+  &__subtext {
+    font-size: 0.14rem;
+    color: #999;
+    margin-bottom: 0.3rem; // 总间距与购物车一致
+  }
+
+  &__btn {
+    padding: 0.1rem 0.4rem;
+    background-color: $color-docker;
+    color: white;
+    border: none;
+    border-radius: 0.2rem;
+    font-size: 0.14rem;
+    cursor: pointer;
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+}
+
+// 调整布局，当订单为空时
+.layout:has(.empty-order) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .order-item {

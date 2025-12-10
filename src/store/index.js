@@ -39,10 +39,11 @@ export default createStore({
     changeItem (state, payload) {
       const { shopId, shopName, productId, productInfo, num } = payload
 
-      // 保证 shopId 存在
+      // 保证 shopId 存在，同时设置 shopName
       if (!state.cartList[shopId]) {
         state.cartList[shopId] = { shopName: shopName || '', productList: {} }
-      } else if (shopName && !state.cartList[shopId].shopName) {
+      } else if (shopName) {
+        // 如果已有 shopId，更新 shopName（确保最新）
         state.cartList[shopId].shopName = shopName
       }
 
@@ -65,14 +66,6 @@ export default createStore({
       const cartItem = state.cartList[shopId]?.productList[productId]
       if (!cartItem) return
       cartItem.check = !cartItem.check
-    },
-
-    // 清空某个店铺购物车
-    clearCart (state, payload) {
-      const { shopId } = payload
-      if (state.cartList[shopId]) {
-        state.cartList[shopId].productList = {}
-      }
     },
 
     // 全选/取消全选
@@ -100,9 +93,52 @@ export default createStore({
     addShopName (state, payload) {
       const { shopId, shopName } = payload
       if (!state.cartList[shopId]) {
-        state.cartList[shopId] = { shopName: '', productList: {} }
+        state.cartList[shopId] = { shopName: shopName || '', productList: {} }
       }
       state.cartList[shopId].shopName = shopName
+    },
+
+    clearPurchasedItems (state, payload) {
+      const { shopId, productIds } = payload
+      const shopInfo = state.cartList[shopId]
+
+      if (shopInfo?.productList) {
+        productIds.forEach(id => {
+          if (shopInfo.productList[id]) {
+            delete shopInfo.productList[id]
+          }
+        })
+
+        // 如果该店铺商品已空，删除整个店铺项
+        const remainingProducts = Object.keys(shopInfo.productList)
+        if (remainingProducts.length === 0) {
+          delete state.cartList[shopId]
+        }
+      }
+    },
+
+    // 或者修改原有的 clearCart 方法，使其更智能
+    clearCart (state, payload) {
+      const { shopId, productIds } = payload
+
+      // 如果传入了 productIds，只清除指定的商品
+      if (productIds && Array.isArray(productIds)) {
+        const shopInfo = state.cartList[shopId]
+        if (shopInfo?.productList) {
+          productIds.forEach(id => {
+            delete shopInfo.productList[id]
+          })
+
+          // 检查是否还有商品
+          if (Object.keys(shopInfo.productList).length === 0) {
+            delete state.cartList[shopId]
+          }
+        }
+      } else if (state.cartList[shopId]) {
+        state.cartList[shopId].productList = {}
+        // 可选：也可以删除整个店铺
+        // delete state.cartList[shopId]
+      }
     }
   },
   plugins: [persistencePlugin]

@@ -118,7 +118,7 @@ const cartEffect = () => {
 
   const productList = computed(() => {
     const productList = cartList[shopId]?.productList || {}
-    return Object.values(productList).filter(item => item.check)
+    return Object.values(productList).filter(item => item.count > 0)
   })
 
   const allSelected = computed(() => {
@@ -408,6 +408,11 @@ export default {
     height: 0.46rem;
     margin-right: 0.16rem;
     background-color: $search-background;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .item-detail {
