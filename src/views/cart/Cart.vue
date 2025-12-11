@@ -120,37 +120,11 @@ export default {
 @import "../../style/mixins.scss";
 
 .layout {
-  /* 定位 */
-  position: relative;
-  left: 0;
-  right: 0;
-  top: 0;
-  min-height: calc(100vh - 1.1rem);
-
-  background-color: #f5f5f5;
-
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-
-  /* 盒模型 */
-  padding: 0.6rem 0.18rem 0.7rem;
+  @include commonlayout;
 }
 
 .header {
-  position: fixed;
-
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 0.44rem;
-  line-height: 0.44rem;
-  background-color: #ffffff;
-  text-align: center;
-  font-size: 0.16rem;
-  color: $content-font-color;
-  z-index: 1000;
+  @include commonheader;
 }
 
 .empty-cart {

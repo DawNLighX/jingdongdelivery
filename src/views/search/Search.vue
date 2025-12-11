@@ -128,15 +128,14 @@ export default {
   top: 0;
   height: 100%;
 
-  background-color: #ffffff;
-
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-
   /* 盒模型 */
   padding: 0.16rem 0.18rem;
+
+  -webkit-tap-highlight-color: transparent;
+    // 保持统一样式
+  -webkit-appearance: none;
+  -moz-appearance: none;    // Firefox
+  appearance: none;
 }
 
 .search-history,

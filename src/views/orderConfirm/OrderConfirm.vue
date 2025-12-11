@@ -22,16 +22,7 @@ export default {
 @import "../../style/mixins.scss";
 
 .layout {
-  /* 定位 */
-  position: relative;
-  min-height: 100vh; /* 确保撑满整个视口 */
-  box-sizing: border-box;
-
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-
+  @include commonlayout;
   /* 盒模型 */
   padding: 0 0.18rem 0.7rem 0.18rem;
   background-color: #ffffff;

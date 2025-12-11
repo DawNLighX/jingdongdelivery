@@ -58,6 +58,16 @@ const routes = [
     path: '/searchList',
     name: 'SearchList',
     component: () => import(/* webpackChunkName: "searchList" */'../views/searchList/SearchList')
+  },
+  {
+    path: '/mineAddress',
+    name: 'MineAddress',
+    component: () => import(/* webpackChunkName: "mineAddress" */'../views/mineAddress/MineAddress')
+  },
+  {
+    path: '/mineAddressCreate',
+    name: 'MineAddressCreate',
+    component: () => import(/* webpackChunkName: "mineAddressCreate" */'../views/mineAddressCreate/MineAddressCreate')
   }
 ]
 

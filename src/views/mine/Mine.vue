@@ -3,10 +3,13 @@
     <div class="user-info">
       <div class="user-profile">
         <div class="user-profile__photo">
-          <img />
+          <img src="../../assets/icons/fakeheadphoto.jpg"/>
+        </div>
+        <div class="user-profile__edit iconfont" @click="handleEditProfile()">
+          &#xe634;
         </div>
         <div class="user-profile__nickname">
-          DawNLighX
+          DawNLighX{{ userNickname }}
         </div>
         <div class="user-profile__id">
           ID：1069643013{{ userId }}
@@ -27,7 +30,7 @@
             优惠券
           </span>
           <span class="user-assets__content">
-            {{ 18 }}张
+            {{ 18 }} 张
           </span>
         </div>
 
@@ -52,7 +55,21 @@
     </div>
 
     <div class="user-panel">
-
+      <div class="user-panel__wallet">
+        <span class="user-panel__icon iconfont">&#xe602;</span>
+        <span class="user-panel__title">我的卡包</span>
+        <span class="user-panel__to iconfont">&#xe66b;</span>
+      </div>
+      <div class="user-panel__address">
+        <span class="user-panel__icon iconfont">&#xe604;</span>
+        <span class="user-panel__title" @click="handleEditAddress()">我的地址</span>
+        <span class="user-panel__to iconfont">&#xe66b;</span>
+      </div>
+      <div class="user-panel__support">
+        <span class="user-panel__icon iconfont">&#xe601;</span>
+        <span class="user-panel__title">客服与帮助</span>
+        <span class="user-panel__to iconfont">&#xe66b;</span>
+      </div>
     </div>
 
   </div>
@@ -61,6 +78,7 @@
 
 <script>
 import MainDocker from '../../components/MainDocker.vue'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'Mine',
@@ -68,7 +86,17 @@ export default {
     MainDocker
   },
   setup () {
+    const router = useRouter()
 
+    const handleEditProfile = () => {
+      router.push('/mineProfile')
+    }
+
+    const handleEditAddress = () => {
+      router.push('/mineAddress')
+    }
+
+    return { handleEditProfile, handleEditAddress }
   },
   mounted () {
     // 强制滚动到顶部
@@ -88,15 +116,7 @@ export default {
 @import "../../style/mixins.scss";
 
 .layout {
-  /* 定位 */
-  position: relative;
-  min-height: 100vh; /* 确保撑满整个视口 */
-  box-sizing: border-box;
-
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
+  @include commonlayout;
 
   /* 盒模型 */
   padding: 0 0.18rem 0.7rem 0.18rem;
@@ -117,7 +137,7 @@ export default {
   width: 3.39rem;
   background-color: #ffffff;
   border-radius: 0.08rem;
-  box-shadow: 0 0.08rem 0.1rem 0 rgba(100, 100, 100, 0.1);
+  box-shadow: 0 0.04rem 0.08rem 0 rgba(0, 0, 0, 0.06), 0 0.02rem 0.04rem 0 rgba(0, 0, 0, 0.04);
   z-index: 1000;
   position: absolute;
 
@@ -141,6 +161,23 @@ export default {
     height: 0.94rem;
     border-radius: 50%;
     background-color: #dddddd;
+
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+  }
+
+  &__edit {
+    position: absolute;
+    height: 0.3rem;
+    width: 0.3rem;
+    right: 0;
+    top: -0.38rem;
+    color: #ffffff;
+    font-size: 0.28rem;
+    text-align: center;
   }
 
   &__nickname {
@@ -207,17 +244,49 @@ export default {
 .user-panel {
   box-sizing: content-box;
   height: 1.46rem;
-  width: 3.39rem;
+  width: 3.15rem;
   background-color: #ffffff;
   border-radius: 0.08rem;
-  box-shadow: 0 0.08rem 0.1rem 0 rgba(100, 100, 100, 0.1);
+  box-shadow: 0 0.04rem 0.08rem 0 rgba(0, 0, 0, 0.06), 0 0.02rem 0.04rem 0 rgba(0, 0, 0, 0.04);
   z-index: 1000;
   position: absolute;
   margin-top: 3.27rem;
+  padding: 0 0.12rem;
 
   display: flex;
   align-items: center;
   flex-direction: column;
+  justify-content: space-around;
+
+  div {
+    display: flex;
+    align-items: center;
+
+    height: 0.3rem;
+    line-height: 0.3rem;
+    width: 100%;
+  }
+
+  &__icon {
+    font-size: 0.28rem;
+    color: $green-500;
+    height: 0.3rem;
+    line-height: 0.3rem;
+    margin-right: 0.12rem;
+  }
+
+  &__title {
+    flex: 1;
+    font-size: 0.14rem;
+    color: #262626;
+    height: 0.3rem;
+    line-height: 0.3rem;
+  }
+
+  &__to {
+    color: #C2C4CA;
+    font-size: 0.18rem;
+  }
 }
 
 </style>

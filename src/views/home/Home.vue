@@ -31,19 +31,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
+@import "../../style/mixins.scss";
 
 .layout {
-  /* 定位 */
-  position: relative;
-  left: 0;
-  right: 0;
-  top: 0;
-
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-
+  @include commonlayout;
   /* 盒模型 */
   padding: 0 0.18rem 0.7rem;
   background-color: #ffffff;

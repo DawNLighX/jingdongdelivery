@@ -80,6 +80,12 @@ export default {
   height: 100vh;
   background-color: #ffffff;
   padding: 0.16rem 0.18rem;
+
+  -webkit-tap-highlight-color: transparent;
+    // 保持统一样式
+  -webkit-appearance: none;
+  -moz-appearance: none;    // Firefox
+  appearance: none;
 }
 
 .search-area {
@@ -90,7 +96,7 @@ export default {
   height: 0.32rem;
 
   &__cancel-btn {
-    font-size: 0.24rem;
+    font-size: 0.25rem;
     color: #666666;
     cursor: pointer;
   }
