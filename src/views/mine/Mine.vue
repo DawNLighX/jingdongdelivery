@@ -9,10 +9,10 @@
           &#xe634;
         </div>
         <div class="user-profile__nickname">
-          DawNLighX{{ userNickname }}
+          DawNLighX
         </div>
         <div class="user-profile__id">
-          ID：1069643013{{ userId }}
+          ID：1069643013
         </div>
       </div>
       <div class="user-assets">

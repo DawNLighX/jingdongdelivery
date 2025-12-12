@@ -5,16 +5,33 @@
     <span class="header__oprate" @click="handleGoOprate()">新建</span>
   </header>
   <div class="layout">
-    <div class="title">我的收货地址</div>
-    <div class="address" v-for="item in addressList" :key="item._id">
-      <div class="address__info">
-        <div class="address__info__personal">
-          <span class="personal-name">{{item.name}}</span>
-          <span class="personal-phone">{{item.phone}}</span>
+    <!-- 加载状态 -->
+    <div v-if="loading" class="empty-state loading-state">
+      <div class="loading-spinner"></div>
+      <p>加载地址中...</p>
+    </div>
+
+    <!-- 无地址状态 -->
+    <div v-else-if="!addressList || addressList.length === 0" class="empty-state">
+      <div class="empty-state__icon iconfont">&#xe66d;</div>
+      <p class="empty-state__text">暂无收货地址</p>
+      <p class="empty-state__subtext">添加地址以方便购物</p>
+      <button class="empty-state__btn" @click="handleGoOprate">新建地址</button>
+    </div>
+
+    <!-- 有地址列表 -->
+    <div v-else>
+      <div class="title">我的收货地址</div>
+      <div class="address" v-for="item in addressList" :key="item._id">
+        <div class="address__info">
+          <div class="address__info__personal">
+            <span class="personal-name">{{item.name}}</span>
+            <span class="personal-phone">{{item.phone}}</span>
+          </div>
+          <div class="address__info__location">{{item.city}} {{ item.department }} {{ item.houseNumber }}</div>
         </div>
-        <div class="address__info__location">{{item.city}} {{ item.department }} {{ item.houseNumber }}</div>
+        <span class="address__edit iconfont" @click="handleEditAddress(item._id)">&#xe66b;</span>
       </div>
-      <span class="address__edit iconfont">&#xe66b;</span>
     </div>
   </div>
 </template>
@@ -26,22 +43,26 @@ import { get } from '../../utils/request'
 
 const useAddressListEffect = () => {
   const addressList = ref([])
+  const loading = ref(true)
 
   const getAddressList = async () => {
     try {
+      loading.value = true
       const result = await get('/api/user/address')
       if (result?.errno === 0 && result?.data?.length) {
         addressList.value = result.data
       } else {
-        // 如果没有数据，设置空数组
         addressList.value = []
       }
     } catch (error) {
-      addressList.value = error.message
-      addressList.value = [] // 出错时也设置为空
+      console.error('获取地址失败:', error)
+      addressList.value = []
+    } finally {
+      loading.value = false
     }
   }
-  return { addressList, getAddressList }
+
+  return { addressList, loading, getAddressList }
 }
 
 export default {
@@ -57,17 +78,19 @@ export default {
       router.push('/mineAddressCreate')
     }
 
-    const { addressList, getAddressList } = useAddressListEffect()
+    const handleEditAddress = (id) => {
+      router.push(`/mineAddressCreate?id=${id}`)
+    }
+
+    const { addressList, loading, getAddressList } = useAddressListEffect()
     getAddressList()
-    return { handleGoBack, handleGoOprate, addressList, getAddressList }
+    return { handleGoBack, handleGoOprate, addressList, loading, getAddressList, handleEditAddress }
   },
 
   mounted () {
-    // 强制滚动到顶部
     window.scrollTo(0, 0)
   },
   activated () {
-    // 每次激活时都滚动到顶部
     this.$nextTick(() => {
       window.scrollTo(0, 0)
     })
@@ -96,6 +119,7 @@ export default {
     margin-right: 0.18rem;
     font-size: 0.14rem;
     width: 0.28rem;
+    color: $content-font-color;
   }
 }
 
@@ -103,12 +127,82 @@ export default {
   @include commonlayout;
 }
 
-.title{
+.title {
   font-size: 0.14rem;
   color: $content-font-color;
   line-height: 0.20rem;
   height: 0.20rem;
   margin-bottom: 0.12rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 0;
+  text-align: center;
+
+  &__icon {
+    font-size: 0.6rem;
+    color: #d8d8d8;
+    margin-bottom: 0.16rem;
+  }
+
+  &__text {
+    font-size: 0.16rem;
+    color: #999;
+    margin-bottom: 0.08rem;
+    font-weight: 500;
+  }
+
+  &__subtext {
+    font-size: 0.12rem;
+    color: #ccc;
+    margin-bottom: 0.24rem;
+  }
+
+  &__btn {
+    width: 1.2rem;
+    height: 0.36rem;
+    background: $green-500;
+    color: #ffffff;
+    border: none;
+    border-radius: 0.18rem;
+    font-size: 0.14rem;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      background: darken($green-500, 10%);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+.loading-state {
+  .loading-spinner {
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 0.03rem solid #f3f3f3;
+    border-top: 0.03rem solid $green-500;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 0.16rem;
+  }
+
+  p {
+    font-size: 0.14rem;
+    color: #999;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .address {
@@ -132,7 +226,7 @@ export default {
     &__personal {
       text-align: left;
       margin-bottom: 0.08rem;
-      width: 1.76rem;
+      width: 2.87rem;
       display: flex;
       justify-content: space-between;
 
@@ -147,7 +241,7 @@ export default {
       }
 
       .personal-name {
-        width: 0.8rem;
+        width: 1rem;
       }
 
       .personal-phone {
@@ -161,6 +255,11 @@ export default {
       color: $content-font-color;
       font-size: 0.14rem;
       width: 2.6rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
   }
 
@@ -171,5 +270,4 @@ export default {
     margin-left: auto;
   }
 }
-
 </style>
