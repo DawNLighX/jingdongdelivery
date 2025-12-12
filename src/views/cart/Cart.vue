@@ -23,7 +23,10 @@
       </div>
       <div class="products__list">
         <div
-          class="info-item"
+          :class="{
+            'info-item':true,
+            'info-item--disable': product.count <= 0,
+            }"
           v-for="product in cart.productList"
           :key="product._id"
         >
@@ -220,6 +223,10 @@ export default {
   font-size: 0.14rem;
   padding: 0;
   margin-bottom: 0.16rem;
+
+  &--disable {
+    display: none;
+  }
 
   .item-img {
     width: 0.46rem;
