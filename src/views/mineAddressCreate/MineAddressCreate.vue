@@ -27,7 +27,7 @@
         <input
           class="content__item__input"
           placeholder="如 东单元202"
-          v-model="doorNumber"
+          v-model="houseNumber"
         />
       </p>
       <p class="content__item">
@@ -86,7 +86,7 @@ export default {
           const address = result.data
           formData.city = address.city || ''
           formData.department = address.department || ''
-          formData.doorNumber = address.houseNumber || ''
+          formData.houseNumber = address.houseNumber || ''
           formData.personname = address.name || ''
           formData.phone = address.phone || ''
         }
