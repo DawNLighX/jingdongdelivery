@@ -5,21 +5,23 @@
     </div>
     <div class="header__title">确认订单</div>
     <div class="header__address">
-      <div class="header__address__info">
+      <div class="header__address__info"  @click="handleGoSelect()">
         <div class="info-title">收货地址</div>
-        <div class="info-location">北京市朝阳区望京SOHO T3 1001室</div>
-        <div class="info-personal">
-          <span class="personal-name">张三（先生）</span>
-          <span class="personal-phone">13800138000</span>
+        <div class="info-location">{{ hasAddress ? `${data.city} ${data.department} ${data.houseNumber}` : '请选择收货地址'}}</div>
+        <div class="info-personal" v-if="hasAddress">
+          <span class="personal-name">{{data.name}}</span>
+          <span class="personal-phone">{{data.phone}}</span>
         </div>
       </div>
-      <span class="header__address__select iconfont">&#xe66b;</span>
     </div>
   </header>
 </template>
 
 <script>
-import { useRouter } from 'vue-router'
+import { reactive } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { onBeforeMount } from '@vue/runtime-core'
+import { get } from '../../utils/request.js'
 
 const goBackEffect = () => {
   const router = useRouter()
@@ -32,8 +34,33 @@ const goBackEffect = () => {
 export default {
   name: 'OrderHeader',
   setup () {
+    const route = useRoute()
+    const router = useRouter()
+    const data = reactive({})
+    const addressId = route.query.id
+    const handleGoSelect = () => {
+      router.push(`/mineAddressSelect?path=${route.path}`)
+    }
+
+    onBeforeMount(async () => {
+      try {
+        if (addressId) {
+          const result = await get(`/api/user/address/${addressId}`)
+          if (result?.errno === 0 && result?.data) {
+            data.city = result.data.city
+            data.department = result.data.department
+            data.houseNumber = result.data.houseNumber
+            data.name = result.data.name
+            data.phone = result.data.phone
+          }
+        }
+      } catch (error) {
+        console.error('获取地址失败:', error)
+      }
+    })
+
     const { handleGoBack } = goBackEffect()
-    return { handleGoBack }
+    return { handleGoBack, handleGoSelect, hasAddress: !!addressId, data }
   }
 }
 </script>
@@ -112,6 +139,7 @@ export default {
   color: $content-font-color;
   font-size: 0.14rem;
   margin-bottom: 0.06rem;
+  @include ellipsis;
 }
 
 .info-personal {

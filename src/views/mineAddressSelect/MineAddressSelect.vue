@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <span class="header__back iconfont" @click="handleGoBack()">&#xe66a;</span>
-    <span class="header__title">我的地址</span>
+    <span class="header__title">请选择收货地址</span>
     <span class="header__oprate" @click="handleGoOprate()">新建</span>
   </header>
   <div class="layout">
@@ -21,8 +21,7 @@
 
     <!-- 有地址列表 -->
     <div v-else>
-      <div class="title">我的收货地址</div>
-      <div class="address" v-for="item in addressList" :key="item._id">
+      <div class="address" v-for="item in addressList" :key="item._id" @click="handelSelectAddress(item._id)">
         <div class="address__info">
           <div class="address__info__personal">
             <span class="personal-name">{{item.name}}</span>
@@ -38,7 +37,7 @@
 
 <script>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { get } from '../../utils/request'
 
 const useAddressListEffect = () => {
@@ -66,9 +65,10 @@ const useAddressListEffect = () => {
 }
 
 export default {
-  name: 'MineAddress',
+  name: 'MineAddressSelect',
   setup () {
     const router = useRouter()
+    const route = useRoute()
 
     const handleGoBack = () => {
       router.back()
@@ -82,9 +82,14 @@ export default {
       router.push(`/mineAddressCreate?id=${id}`)
     }
 
+    const handelSelectAddress = (id) => {
+      const path = route.query.path
+      router.push(`${path}?id=${id}`)
+    }
+
     const { addressList, loading, getAddressList } = useAddressListEffect()
     getAddressList()
-    return { handleGoBack, handleGoOprate, addressList, loading, getAddressList, handleEditAddress }
+    return { handleGoBack, handleGoOprate, addressList, loading, getAddressList, handleEditAddress, handelSelectAddress }
   },
 
   mounted () {
@@ -125,14 +130,6 @@ export default {
 
 .layout {
   @include commonlayout;
-}
-
-.title {
-  font-size: 0.14rem;
-  color: $content-font-color;
-  line-height: 0.20rem;
-  height: 0.20rem;
-  margin-bottom: 0.12rem;
 }
 
 .empty-state {

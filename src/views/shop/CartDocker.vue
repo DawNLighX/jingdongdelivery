@@ -70,7 +70,7 @@
     </span>
     <div class="docker__order">
       <router-link
-        :to="{ path: `/orderConfirm/${shopId}`, query: { shopName } }"
+        :to="{path: `/orderConfirm/${shopId}`}"
       >
         去结算
       </router-link>

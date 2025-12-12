@@ -68,6 +68,11 @@ const routes = [
     path: '/mineAddressCreate',
     name: 'MineAddressCreate',
     component: () => import(/* webpackChunkName: "mineAddressCreate" */'../views/mineAddressCreate/MineAddressCreate')
+  },
+  {
+    path: '/mineAddressSelect',
+    name: 'MineAddressSelect',
+    component: () => import(/* webpackChunkName: "mineAddressSelect" */'../views/mineAddressSelect/MineAddressSelect')
   }
 ]
 

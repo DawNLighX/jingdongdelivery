@@ -69,7 +69,7 @@ export default {
     const formData = reactive({
       city: '',
       department: '',
-      doorNumber: '',
+      houseNumber: '',
       personname: '',
       phone: ''
     })
@@ -114,7 +114,7 @@ export default {
           return false
         }
 
-        if (!formData.doorNumber) {
+        if (!formData.houseNumber) {
           showToast('请填写楼号-门牌号！')
           return false
         }
@@ -132,7 +132,7 @@ export default {
         const requestData = {
           city: formData.city,
           department: formData.department,
-          doorNumber: formData.doorNumber,
+          houseNumber: formData.houseNumber,
           name: formData.personname,
           phone: formData.phone
         }
@@ -166,14 +166,14 @@ export default {
     })
 
     // 使用toRefs将formData转换为ref，方便在模板中使用
-    const { city, department, doorNumber, personname, phone } = toRefs(formData)
+    const { city, department, houseNumber, personname, phone } = toRefs(formData)
 
     return {
       handleGoBack,
       handleSave,
       city,
       department,
-      doorNumber,
+      houseNumber,
       personname,
       phone,
       show,

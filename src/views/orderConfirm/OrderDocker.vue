@@ -4,7 +4,7 @@
       <span class="docker__total__text">实付金额：</span>
       <span class="docker__total__num">&yen;{{ totalPrice }}</span>
     </span>
-    <div class="docker__order" @click="handleSubmitOrder">提交订单</div>
+    <div class="docker__order" @click="handleSubmitOrder()">提交订单</div>
   </footer>
 
   <!-- 支付确认弹窗 -->
@@ -90,16 +90,25 @@ const cartEffect = () => {
 const usePayConfirm = (showToast, totalAmount) => {
   const payConfirmShow = ref(false)
   const cancelConfirmShow = ref(false)
-  const countdown = ref(30) // 30分钟倒计时
+  const countdown = ref(15) // 15分钟倒计时
+  const route = useRoute()
 
   let timer = null
 
   // 提交订单点击事件
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = (path) => {
     if (totalAmount.value === 0) {
       showToast('请先选择商品后再进行支付！')
       return
     }
+
+    const addressId = route.query.id
+
+    if (!addressId) {
+      showToast('请先选择地址后再进行支付！')
+      return
+    }
+
     payConfirmShow.value = true
     startCountdown()
   }
@@ -112,7 +121,7 @@ const usePayConfirm = (showToast, totalAmount) => {
 
   // 开始倒计时
   const startCountdown = () => {
-    countdown.value = 30
+    countdown.value = 15
     timer = setInterval(() => {
       if (countdown.value > 0) {
         countdown.value--
@@ -155,7 +164,7 @@ const usePayConfirm = (showToast, totalAmount) => {
 }
 
 // 订单处理逻辑
-const useOrderHandler = (showToast, shopId, selectedProducts, shopName) => {
+const useOrderHandler = (showToast, shopId, selectedProducts, shopName, addressId) => {
   const store = useStore()
   const router = useRouter()
 
@@ -181,7 +190,7 @@ const useOrderHandler = (showToast, shopId, selectedProducts, shopName) => {
       ).toFixed(2)
 
       const result = await post('/api/order', {
-        addressId: 1, // 这里应该从地址管理获取真实地址ID
+        addressId, // 这里应该从地址管理获取真实地址ID
         shopId,
         shopName: shopName.value,
         products,
@@ -253,11 +262,11 @@ export default {
   components: { Toast },
   setup () {
     const route = useRoute()
+    const store = useStore()
     const shopId = route.params.id
 
     // 获取店铺名称
     const shopName = computed(() => {
-      const store = useStore()
       return route.query.shopName || store.state.cartList[shopId]?.shopName || '未知店铺'
     })
 
@@ -282,7 +291,8 @@ export default {
       showToast,
       shopId,
       selectedProducts,
-      shopName
+      shopName,
+      route.query.addressId
     )
 
     return {
