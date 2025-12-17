@@ -20,7 +20,7 @@
             v-for="(imgItem, imgIndex) in item.products"
             :key="imgIndex"
           >
-            <img :src="imgItem.product.img" />
+            <img :src="imgItem.product.imgUrl" />
           </span>
         </div>
         <div class="order-item__content__product-info">

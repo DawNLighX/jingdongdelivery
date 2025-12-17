@@ -47,7 +47,7 @@ const useHotWordListEffect = () => {
   const hotWordList = ref([])
 
   const getHotWordList = async () => {
-    const result = await get('api/search/hot-words')
+    const result = await get('/api/search/hot-words')
     if (result?.errno === 0 && result?.data?.length) {
       hotWordList.value = result.data
     }
