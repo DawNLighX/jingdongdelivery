@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: 'https://m1.apifoxmock.com/m1/7414080-7147438-default',
+  baseURL: 'http://localhost:3000',
+  withCredentials: true,
   timeout: 10000
 })
 

@@ -68,6 +68,10 @@ const cats = [
   {
     name: '新鲜水果',
     tab: 'fruit'
+  },
+  {
+    name: '新鲜蔬菜',
+    tab: 'vegetables'
   }
 ]
 

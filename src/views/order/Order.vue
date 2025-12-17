@@ -11,7 +11,7 @@
     <div class="order-item" v-for="(item, index) in list" :key="index">
       <div class="order-item__header">
         <span class="order-item__header__shop-name">{{ item.shopName }}</span>
-        <span class="order-item__header__order-id">订单号：{{ item.orderId }}</span>
+        <span class="order-item__header__order-id">订单号：{{ item._id.slice(-12) }}</span>
         <span class="order-item__header__status">{{ item.isCanceled? "已取消" : "已支付" }}</span>
       </div>
       <div class="order-item__content">

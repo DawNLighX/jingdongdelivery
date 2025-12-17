@@ -164,7 +164,7 @@ const usePayConfirm = (showToast, totalAmount) => {
 }
 
 // 订单处理逻辑
-const useOrderHandler = (showToast, shopId, selectedProducts, shopName, addressId) => {
+const useOrderHandler = (showToast, shopId, selectedProducts, shopName, addressId, totalPrice, totalAmount) => {
   const store = useStore()
   const router = useRouter()
 
@@ -178,7 +178,7 @@ const useOrderHandler = (showToast, shopId, selectedProducts, shopName, addressI
 
       const products = selectedProducts.value.map(product => ({
         id: product._id,
-        count: product.count,
+        num: product.count,
         price: product.price,
         name: product.name,
         imgUrl: product.imgUrl
@@ -193,9 +193,9 @@ const useOrderHandler = (showToast, shopId, selectedProducts, shopName, addressI
         addressId, // 这里应该从地址管理获取真实地址ID
         shopId,
         shopName: shopName.value,
+        isCanceled: false,
         products,
-        totalPrice,
-        orderTime: new Date().toISOString()
+        totalPrice
       })
 
       if (result?.errno === 0) {
@@ -264,6 +264,7 @@ export default {
     const route = useRoute()
     const store = useStore()
     const shopId = route.params.id
+    const addressId = route.query.id
 
     // 获取店铺名称
     const shopName = computed(() => {
@@ -292,7 +293,9 @@ export default {
       shopId,
       selectedProducts,
       shopName,
-      route.query.addressId
+      addressId,
+      totalPrice,
+      totalAmount
     )
 
     return {
