@@ -84,8 +84,8 @@ const registerEffect = (showToast) => {
     }
   }
 
-  // 使用防抖处理注册，防止重复点击（800ms 延迟）
-  const handleRegister = debounceUniversal(handleRegisterOriginal, 100, false)
+  // 使用防抖处理注册，防止重复点击（200ms 延迟）
+  const handleRegister = debounceUniversal(handleRegisterOriginal, 200, false)
 
   const { username, password, ensurement } = toRefs(data)
 

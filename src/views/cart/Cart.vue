@@ -2,13 +2,6 @@
   <header class="header">我的购物车</header>
 
   <div class="layout">
-    <!-- 加载动画 -->
-    <div v-if="loading" class="empty-state loading-state">
-      <div class="loading-spinner"></div>
-      <p>加载购物车中...</p>
-    </div>
-
-    <div v-else>
     <div class="empty-cart" v-if="isEmpty">
       <div class="empty-cart__icon">🛒</div>
       <p class="empty-cart__text">购物车还是空的哦~</p>
@@ -57,14 +50,13 @@
     </div>
 
     <MainDocker />
-    </div>
   </div>
 </template>
 
 <script>
 import MainDocker from '../../components/MainDocker'
 import { useRouter } from 'vue-router'
-import { computed, ref, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { throttle } from '../../utils/throttle'
 
@@ -76,15 +68,7 @@ export default {
   setup () {
     const router = useRouter()
     const store = useStore()
-    const loading = ref(true)
     const list = store.state.cartList
-
-    // 模拟加载完成
-    onMounted(() => {
-      setTimeout(() => {
-        loading.value = false
-      }, 500)
-    })
 
     // 计算购物车是否为空
     const isEmpty = computed(() => {
@@ -139,40 +123,6 @@ export default {
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
 @import "../../style/mixins.scss";
-
-/* 加载动画样式 */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem 0;
-  text-align: center;
-}
-
-.loading-state {
-  min-height: calc(100vh - 1.1rem);
-
-  .loading-spinner {
-    width: 0.4rem;
-    height: 0.4rem;
-    border: 0.03rem solid #f3f3f3;
-    border-top: 0.03rem solid $jingdong-green;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 0.16rem;
-  }
-
-  p {
-    font-size: 0.14rem;
-    color: #999;
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 
 .layout {
   @include commonlayout;
@@ -341,37 +291,5 @@ export default {
     display: flex;
     justify-content: flex-start;
   }
-}
-
-/* 加载动画样式 */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.8rem 0;
-  text-align: center;
-}
-
-.loading-state {
-  .loading-spinner {
-    width: 0.4rem;
-    height: 0.4rem;
-    border: 0.03rem solid #f3f3f3;
-    border-top: 0.03rem solid $jingdong-green;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 0.16rem;
-  }
-
-  p {
-    font-size: 0.14rem;
-    color: #999;
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 </style>

@@ -74,8 +74,8 @@ const loginEffect = (showToast) => {
     }
   }
 
-  // 使用防抖处理登录，防止重复点击（800ms 延迟）
-  const handleLogin = debounceUniversal(handleLoginOriginal, 100, false)
+  // 使用防抖处理登录，防止重复点击（200ms 延迟）
+  const handleLogin = debounceUniversal(handleLoginOriginal, 200, false)
 
   const { username, password } = toRefs(data)
 

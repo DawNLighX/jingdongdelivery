@@ -161,8 +161,8 @@ export default {
       }
     }
 
-    // 使用防抖处理保存，防止重复提交（800ms 延迟）
-    const handleSave = debounceUniversal(handleSaveOriginal, 800, false)
+    // 使用防抖处理保存，防止重复提交（500ms 延迟）
+    const handleSave = debounceUniversal(handleSaveOriginal, 500, false)
 
     // 组件挂载时加载地址数据（如果是编辑模式）
     onMounted(() => {
