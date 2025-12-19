@@ -14,7 +14,7 @@
         :key="item._id"
       >
         <span class="item-img">
-          <img :src="item.imgUrl" />
+          <img v-lazy="item.imgUrl" alt="商品图片" />
         </span>
         <span class="item-detail">
           <span class="item-detail__title">{{ item.name }}</span>

@@ -2,6 +2,13 @@
   <header class="header">我的购物车</header>
 
   <div class="layout">
+    <!-- 加载动画 -->
+    <div v-if="loading" class="empty-state loading-state">
+      <div class="loading-spinner"></div>
+      <p>加载购物车中...</p>
+    </div>
+
+    <div v-else>
     <div class="empty-cart" v-if="isEmpty">
       <div class="empty-cart__icon">🛒</div>
       <p class="empty-cart__text">购物车还是空的哦~</p>
@@ -31,7 +38,7 @@
           :key="product._id"
         >
           <span class="item-img">
-            <img :src="product.imgUrl" />
+            <img v-lazy="product.imgUrl" alt="商品图片" />
           </span>
           <span class="item-detail">
             <span class="item-detail__title">{{ product.name }}</span>
@@ -50,13 +57,16 @@
     </div>
 
     <MainDocker />
+    </div>
   </div>
 </template>
 
 <script>
 import MainDocker from '../../components/MainDocker'
 import { useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { throttle } from '../../utils/throttle'
 
 export default {
   name: 'Cart',
@@ -65,34 +75,40 @@ export default {
   },
   setup () {
     const router = useRouter()
-    const list = JSON.parse(localStorage.cartList || '[]')
+    const store = useStore()
+    const loading = ref(true)
+    const list = store.state.cartList
 
-    for (const i in list) {
-      let total = 0
-      const cart = list[i]
-      const productList = cart.productList
-      for (const j in productList) {
-        const product = productList[j]
-        total += product.count
-      }
-      cart.total = total
-    }
+    // 模拟加载完成
+    onMounted(() => {
+      setTimeout(() => {
+        loading.value = false
+      }, 500)
+    })
 
     // 计算购物车是否为空
     const isEmpty = computed(() => {
-      if (list.length === 0) return true
-      // 检查所有店铺的商品总数
-      return Object.values(list).every(cart => cart.total <= 0)
+      return Object.keys(list).length === 0 || Object.values(list).every(cart => !cart.productList || Object.keys(cart.productList).length === 0)
     })
 
     // 计算总商品数量
     const totalCount = computed(() => {
       let total = 0
       for (const key in list) {
-        total += list[key].total || 0
+        const productList = list[key]?.productList || {}
+        for (const productId in productList) {
+          total += productList[productId].count || 0
+        }
       }
       return total
     })
+
+    // 购物车数量改变保存节流处理
+    const handleCartChange = () => {
+      // 数据已通过 Vuex mutation 自动保存到 localStorage
+      console.log('购物车已保存')
+    }
+    const throttledCartChange = throttle(handleCartChange, 500)
 
     // 去逛逛按钮点击事件
     const goShopping = () => {
@@ -100,10 +116,12 @@ export default {
     }
 
     const handleCartClick = (key) => {
+      // 在点击后执行节流的保存操作
+      throttledCartChange()
       router.push(`/shop/${key}`)
     }
     console.log(list)
-    return { list, handleCartClick, isEmpty, totalCount, goShopping }
+    return { list, handleCartClick, isEmpty, totalCount, goShopping, throttledCartChange }
   },
   mounted () {
     // 强制滚动到顶部
@@ -121,6 +139,40 @@ export default {
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
 @import "../../style/mixins.scss";
+
+/* 加载动画样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.loading-state {
+  min-height: calc(100vh - 1.1rem);
+
+  .loading-spinner {
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 0.03rem solid #f3f3f3;
+    border-top: 0.03rem solid $jingdong-green;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 0.16rem;
+  }
+
+  p {
+    font-size: 0.14rem;
+    color: #999;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 .layout {
   @include commonlayout;
@@ -289,5 +341,37 @@ export default {
     display: flex;
     justify-content: flex-start;
   }
+}
+
+/* 加载动画样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 0;
+  text-align: center;
+}
+
+.loading-state {
+  .loading-spinner {
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 0.03rem solid #f3f3f3;
+    border-top: 0.03rem solid $jingdong-green;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 0.16rem;
+  }
+
+  p {
+    font-size: 0.14rem;
+    color: #999;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

@@ -21,8 +21,9 @@
 
 <script>
 import { useRouter, useRoute } from 'vue-router'
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, onMounted } from 'vue'
 import { get } from '../../utils/request'
+import { throttle } from '../../utils/throttle'
 import ShopInfo from '../../components/ShopInfo'
 import Product from './Product'
 import CartDocker from './CartDocker'
@@ -56,6 +57,21 @@ export default {
     const { handleGoBack } = goBackEffect()
 
     getItemData()
+
+    // 滚动加载商品节流处理
+    const handleScroll = () => {
+      // 实际项目中可在此加载更多商品
+      console.log('滚动加载商品')
+    }
+    const throttledScroll = throttle(handleScroll, 500)
+
+    onMounted(() => {
+      // 监听产品列表的滚动事件
+      window.addEventListener('scroll', throttledScroll)
+      return () => {
+        window.removeEventListener('scroll', throttledScroll)
+      }
+    })
 
     return { item, handleGoBack }
   }

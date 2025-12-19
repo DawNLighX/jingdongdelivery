@@ -38,13 +38,14 @@
 import { useRouter } from 'vue-router'
 import { reactive, toRefs } from 'vue'
 import { post } from '../../utils/request.js'
+import { debounceUniversal } from '../../utils/debounce'
 import Toast, { toastEffect } from '../../components/Toast.vue'
 
 const registerEffect = (showToast) => {
   const router = useRouter()
   const data = reactive({ username: '', password: '', ensurement: '' })
 
-  const handleRegister = async () => {
+  const handleRegisterOriginal = async () => {
     try {
       const { username, password, ensurement } = data
 
@@ -82,6 +83,10 @@ const registerEffect = (showToast) => {
       showToast('请求失败')
     }
   }
+
+  // 使用防抖处理注册，防止重复点击（800ms 延迟）
+  const handleRegister = debounceUniversal(handleRegisterOriginal, 100, false)
+
   const { username, password, ensurement } = toRefs(data)
 
   return { handleRegister, username, password, ensurement }

@@ -18,6 +18,7 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { throttle } from '../../utils/throttle'
 
 export default {
   name: 'SearchArea',
@@ -37,6 +38,9 @@ export default {
       router.push(`/searchList?keyword=${value}`)
     }
 
+    // 使用节流处理搜索，防止频繁请求（300ms 间隔）
+    const throttledSearch = throttle(handleSearch, 300)
+
     const handleSearchCancel = () => {
       router.back()
     }
@@ -44,7 +48,7 @@ export default {
     return {
       inputValue,
       inputRef,
-      handleSearch,
+      handleSearch: throttledSearch,
       handleSearchCancel
     }
   }

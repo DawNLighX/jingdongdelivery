@@ -1,6 +1,6 @@
 <template>
   <div class="shop">
-    <img class="shop__icon" :src="item.imgUrl" />
+    <img class="shop__icon" v-lazy="item.imgUrl" alt="店铺图标" />
     <div :class="{'shop__content': true }">
       <p class="shop__content__title">{{ item.name }}</p>
       <div class="shop__content__tags">

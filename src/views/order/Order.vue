@@ -1,31 +1,41 @@
 <template>
   <header class="header">我的订单</header>
   <div class="layout">
-    <div class="empty-order" v-if="isEmpty">
-      <div class="empty-order__icon">📦</div>
-      <p class="empty-order__text">您还没有订单哦</p>
-      <p class="empty-order__subtext">快去下单体验吧~</p>
-      <button class="empty-order__btn" @click="goShopping">去购物</button>
+    <!-- 加载状态 -->
+    <div v-if="loading" class="empty-state loading-state">
+      <div class="loading-spinner"></div>
+      <p>加载订单中...</p>
     </div>
 
-    <div class="order-item" v-for="(item, index) in list" :key="index">
-      <div class="order-item__header">
-        <span class="order-item__header__shop-name">{{ item.shopName }}</span>
-        <span class="order-item__header__order-id">订单号：{{ item._id.slice(-12) }}</span>
-        <span class="order-item__header__status">{{ item.isCanceled? "已取消" : "已支付" }}</span>
-      </div>
-      <div class="order-item__content">
-        <div class="order-item__content__product-logo">
-          <span
-            v-for="(imgItem, imgIndex) in item.products"
-            :key="imgIndex"
-          >
-            <img :src="imgItem.product.imgUrl" />
-          </span>
+    <!-- 无订单状态 -->
+    <div v-else-if="isEmpty" class="empty-state">
+      <div class="empty-state__icon">📦</div>
+      <p class="empty-state__text">您还没有订单哦</p>
+      <button class="empty-state__btn" @click="goShopping">去购物</button>
+    </div>
+
+    <!-- 有订单列表 -->
+    <div v-else>
+      <div class="order-item" v-for="(item, index) in list" :key="index">
+        <!-- 订单项内容保持不变 -->
+        <div class="order-item__header">
+          <span class="order-item__header__shop-name">{{ item.shopName }}</span>
+          <span class="order-item__header__order-id">订单号：{{ item._id.slice(-12) }}</span>
+          <span class="order-item__header__status">{{ item.isCanceled? "已取消" : "已支付" }}</span>
         </div>
-        <div class="order-item__content__product-info">
-          <span class="totalPrice">&yen;{{ item.totalPrice }}</span>
-          <span class="totalAmount">共&nbsp;{{ item.totalAmount }}&nbsp;件</span>
+        <div class="order-item__content">
+          <div class="order-item__content__product-logo">
+            <span
+              v-for="(imgItem, imgIndex) in item.products"
+              :key="imgIndex"
+            >
+              <img v-lazy="imgItem.product.imgUrl" alt="订单商品图" />
+            </span>
+          </div>
+          <div class="order-item__content__product-info">
+            <span class="totalPrice">&yen;{{ item.totalPrice }}</span>
+            <span class="totalAmount">共&nbsp;{{ item.totalAmount }}&nbsp;件</span>
+          </div>
         </div>
       </div>
     </div>
@@ -41,10 +51,15 @@ import { computed, reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 
 const useOrderListEffect = () => {
-  const data = reactive({ list: [] })
+  const data = reactive({
+    list: [],
+    loading: true, // 添加 loading 状态
+    error: null
+  })
 
   const getOrderList = async () => {
     try {
+      data.loading = true // 开始加载
       const result = await get('api/order')
       if (result?.errno === 0 && result?.data?.length) {
         const orderList = result.data
@@ -61,20 +76,20 @@ const useOrderListEffect = () => {
         })
         data.list = result.data
       } else {
-        // 如果没有数据，设置空数组
         data.list = []
       }
     } catch (error) {
       data.error = error.message
-      data.list = [] // 出错时也设置为空
+      data.list = []
     } finally {
-      data.loading = false
+      data.loading = false // 结束加载
     }
   }
-  getOrderList()
-  const { list } = toRefs(data)
 
-  return { list }
+  getOrderList()
+  const { list, loading } = toRefs(data)
+
+  return { list, loading, getOrderList }
 }
 
 export default {
@@ -84,10 +99,11 @@ export default {
   },
   setup () {
     const router = useRouter()
-    const { list, totalPrice } = useOrderListEffect()
-    // 判断是否为空
+    const { list, loading, getOrderList } = useOrderListEffect()
+
+    // 判断是否为空（仅在非加载状态下）
     const isEmpty = computed(() => {
-      return !list.value || list.value.length === 0
+      return !loading.value && (!list.value || list.value.length === 0)
     })
 
     // 去购物按钮事件
@@ -95,17 +111,23 @@ export default {
       router.push('/')
     }
 
-    return { list, totalPrice, isEmpty, goShopping }
+    return {
+      list,
+      loading,
+      isEmpty,
+      goShopping,
+      getOrderList // 如果需要手动刷新
+    }
   },
   mounted () {
-    // 强制滚动到顶部
     window.scrollTo(0, 0)
   },
   activated () {
-    // 每次激活时都滚动到顶部
     this.$nextTick(() => {
       window.scrollTo(0, 0)
     })
+    // 如果需要每次激活都重新获取数据
+    // this.getOrderList()
   }
 }
 </script>
@@ -122,7 +144,7 @@ export default {
   @include commonheader;
 }
 
-.empty-order {
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -139,13 +161,7 @@ export default {
   &__text {
     font-size: 0.16rem;
     color: #999;
-    margin-bottom: 0.1rem; // 与购物车保持一致
-  }
-
-  &__subtext {
-    font-size: 0.14rem;
-    color: #999;
-    margin-bottom: 0.3rem; // 总间距与购物车一致
+    margin-bottom: 0.3rem;
   }
 
   &__btn {
@@ -163,13 +179,33 @@ export default {
   }
 }
 
-// 调整布局，当订单为空时
-.layout:has(.empty-order) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+// 加载状态样式
+.loading-state {
+  min-height: calc(100vh - 1.1rem - 1.2rem);
+
+  .loading-spinner {
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 0.03rem solid #f3f3f3;
+    border-top: 0.03rem solid $color-docker;  // 使用订单页主题色
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 0.16rem;
+  }
+
+  p {
+    font-size: 0.14rem;
+    color: #999;
+  }
 }
 
+// 旋转动画
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// 订单项样式保持不变
 .order-item {
   position: relative;
   margin-bottom: 0.16rem;
@@ -221,15 +257,15 @@ export default {
         width: 2.2rem;
         display: flex;
         gap: 0.12rem;
-        overflow-x: auto; /* 改为 auto，只在需要时显示滚动条 */
-        overflow-y: hidden; /* 纵向隐藏 */
-        white-space: nowrap; /* 防止换行 */
-        -webkit-overflow-scrolling: touch; /* 移动端平滑滚动 */
-        scrollbar-width: none; /* Firefox 隐藏滚动条 */
-        -ms-overflow-style: none; /* IE/Edge 隐藏滚动条 */
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
 
         &::-webkit-scrollbar {
-          display: none; /* Chrome/Safari 隐藏滚动条 */
+          display: none;
         }
 
       span {
@@ -238,7 +274,7 @@ export default {
         box-shadow: 0 0.01rem 0.02rem rgba(0, 0, 0, 0.1);
         background-color: $search-background;
         object-fit: cover;
-        flex-shrink: 0; /* 防止图片被压缩 */
+        flex-shrink: 0;
 
         img {
           width: 100%;
@@ -249,9 +285,7 @@ export default {
 
     &__product-info {
       flex: 1;
-
       height: 0.46rem;
-
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -261,7 +295,6 @@ export default {
         font-size: 0.14rem;
         font-weight: 600;
         color: $jingdong-red;
-
         height: 0.2rem;
         line-height: 0.2rem;
       }
@@ -269,7 +302,6 @@ export default {
       .totalAmount {
         font-size: 0.12rem;
         color: $content-font-color;
-
         height: 0.14rem;
         line-height: 0.14rem;
       }

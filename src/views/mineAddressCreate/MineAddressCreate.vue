@@ -55,6 +55,7 @@
 import { useRouter, useRoute } from 'vue-router'
 import { reactive, toRefs, onMounted } from 'vue'
 import { post, get } from '../../utils/request.js'
+import { debounceUniversal } from '../../utils/debounce'
 import Toast, { toastEffect } from '../../components/Toast.vue'
 
 export default {
@@ -101,7 +102,7 @@ export default {
     }
 
     // 保存地址
-    const handleSave = async () => {
+    const handleSaveOriginal = async () => {
       try {
         // 验证表单
         if (!formData.city) {
@@ -159,6 +160,9 @@ export default {
         showToast('请求失败')
       }
     }
+
+    // 使用防抖处理保存，防止重复提交（800ms 延迟）
+    const handleSave = debounceUniversal(handleSaveOriginal, 800, false)
 
     // 组件挂载时加载地址数据（如果是编辑模式）
     onMounted(() => {

@@ -28,6 +28,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { throttle } from '../../utils/throttle'
 
 export default {
   name: 'SearchList',
@@ -60,6 +61,20 @@ export default {
     const handleBack = () => {
       router.back()
     }
+
+    // 搜索结果列表滚动加载节流处理
+    const handleListScroll = () => {
+      // 实际项目中可在此加载更多搜索结果
+      console.log('搜索结果列表滚动加载')
+    }
+    const throttledListScroll = throttle(handleListScroll, 500)
+
+    onMounted(() => {
+      window.addEventListener('scroll', throttledListScroll)
+      return () => {
+        window.removeEventListener('scroll', throttledListScroll)
+      }
+    })
 
     return {
       keyword,
