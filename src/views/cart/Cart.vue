@@ -10,8 +10,8 @@
 
     <div
       :class="{
-        'products':true,
-        'products--disable': cart.total <= 0,
+        'products': true,
+        'products--disable': getShopTotal(cart) <= 0,
       }"
       v-for="(cart, key) in list"
       :key="key"
@@ -19,7 +19,7 @@
     >
       <div class="products__title">
         {{ cart.shopName }}
-        <span>（共 <b>{{ cart.total }}</b> 件商品）</span>
+        <span>（共 <b>{{ getShopTotal(cart) }}</b> 件商品）</span>
       </div>
       <div class="products__list">
         <div
@@ -94,6 +94,20 @@ export default {
     }
     const throttledCartChange = throttle(handleCartChange, 500)
 
+    // 计算单个店铺的商品总数（兼容 object 或 array 的 productList）
+    const getShopTotal = (cart) => {
+      const products = cart?.productList || {}
+      let total = 0
+      if (Array.isArray(products)) {
+        products.forEach(p => { total += p.count || 0 })
+      } else {
+        for (const id in products) {
+          total += products[id]?.count || 0
+        }
+      }
+      return total
+    }
+
     // 去逛逛按钮点击事件
     const goShopping = () => {
       router.push('/')
@@ -105,7 +119,7 @@ export default {
       router.push(`/shop/${key}`)
     }
     console.log(list)
-    return { list, handleCartClick, isEmpty, totalCount, goShopping, throttledCartChange }
+    return { list, handleCartClick, isEmpty, totalCount, goShopping, throttledCartChange, getShopTotal }
   },
   mounted () {
     // 强制滚动到顶部
