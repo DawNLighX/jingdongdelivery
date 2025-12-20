@@ -30,3 +30,27 @@ export const post = (url, data = {}) => {
     })
   })
 }
+
+export const patch = (url, data = {}) => {
+  return new Promise((resolve, reject) => {
+    instance.patch(url, JSON.stringify(data), {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((response) => {
+      resolve(response.data)
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export const del = (url) => {
+  return new Promise((resolve, reject) => {
+    instance.delete(url).then((response) => {
+      resolve(response.data)
+    }, err => {
+      reject(err)
+    })
+  })
+}

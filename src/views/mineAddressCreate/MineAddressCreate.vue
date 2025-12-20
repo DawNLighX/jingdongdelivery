@@ -46,6 +46,9 @@
           v-model="phone"
         />
       </p>
+      <p class="content__delete" v-if="$route.query.id" @click="handleDelete()">
+        删除地址
+      </p>
     </main>
   </div>
   <Toast :message="toastMessage" :show="show" />
@@ -54,7 +57,7 @@
 <script>
 import { useRouter, useRoute } from 'vue-router'
 import { reactive, toRefs, onMounted } from 'vue'
-import { post, get } from '../../utils/request.js'
+import { post, get, patch, del } from '../../utils/request.js'
 import { debounceUniversal } from '../../utils/debounce'
 import Toast, { toastEffect } from '../../components/Toast.vue'
 
@@ -141,7 +144,7 @@ export default {
         let result
         if (id) {
           // 编辑模式
-          result = await post('/api/user/address', requestData)
+          result = await patch(`/api/user/address/${id}`, requestData)
         } else {
           // 新建模式
           result = await post('/api/user/address', requestData)
@@ -153,7 +156,7 @@ export default {
             router.push('/mineAddress')
           }, 1500)
         } else {
-          showToast(result?.errmsg || (id ? '更新失败' : '新建失败'))
+          showToast(result?.message || (id ? '更新失败' : '新建失败'))
         }
       } catch (e) {
         console.error('保存失败:', e)
@@ -161,8 +164,34 @@ export default {
       }
     }
 
+    // 删除地址
+    const handleDeleteOriginal = async () => {
+      if (!confirm('确定要删除该地址吗？')) {
+        return
+      }
+
+      try {
+        const result = await del(`/api/user/address/${id}`)
+
+        if (result?.errno === 0) {
+          showToast('地址删除成功')
+          setTimeout(() => {
+            router.push('/mineAddress')
+          }, 1500)
+        } else {
+          showToast(result?.message || '删除失败')
+        }
+      } catch (e) {
+        console.error('删除失败:', e)
+        showToast('删除请求失败')
+      }
+    }
+
     // 使用防抖处理保存，防止重复提交（500ms 延迟）
     const handleSave = debounceUniversal(handleSaveOriginal, 500, false)
+
+    // 使用防抖处理删除，防止重复提交（500ms 延迟）
+    const handleDelete = debounceUniversal(handleDeleteOriginal, 500, false)
 
     // 组件挂载时加载地址数据（如果是编辑模式）
     onMounted(() => {
@@ -175,6 +204,7 @@ export default {
     return {
       handleGoBack,
       handleSave,
+      handleDelete,
       city,
       department,
       houseNumber,
@@ -258,6 +288,33 @@ export default {
       height: 100%;
       padding: 0;
       color: #3F3F3F;
+    }
+  }
+
+  &__delete {
+    margin: 0.28rem 0.18rem 0;
+    display: block;
+    width: calc(100% - 0.36rem);
+    padding: 0.12rem 0;
+    text-align: center;
+    background: linear-gradient(90deg, $green-700 0%, darken($green-700, 6%) 100%);
+    border: none;
+    border-radius: 0.08rem;
+    color: #ffffff;
+    font-size: 0.14rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(12,168,12,0.18);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      opacity: 0.95;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
   }
 }
