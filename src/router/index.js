@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { hasToken } from '../utils/token'
 
 const routes = [
   {
@@ -11,8 +12,8 @@ const routes = [
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */'../views/login/Login.vue'),
     beforeEnter (to, from, next) { // 访问某页面之前完成某操作，to表示要去的页面，from表示从哪里来，next是调用跳转
-      const { isLogin } = localStorage
-      isLogin ? next({ name: 'Home' }) : next() // 如果isLogin为true，则直接跳过此页面进入下一页面
+      const isLogin = hasToken() || localStorage.isLogin
+      isLogin ? next({ name: 'Home' }) : next() // 如果已登录，则直接跳过此页面进入下一页面
     }
   },
   {
@@ -20,7 +21,7 @@ const routes = [
     name: 'Register',
     component: () => import(/* webpackChunkName: "register" */'../views/register/Register.vue'),
     beforeEnter (to, from, next) {
-      const { isLogin } = localStorage
+      const isLogin = hasToken() || localStorage.isLogin
       isLogin ? next({ name: 'Home' }) : next()
     }
   },
@@ -81,9 +82,13 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => { // 每次路由导航被触发时，实际跳转发生之前
-  const { isLogin } = localStorage;
-  (!isLogin && (to.name !== 'Login' && to.name !== 'Register')) ? next({ name: 'Login' }) : next() // 如果isLogin为true且目标位置为login时，调用跳转，否则去登录页面
+router.beforeEach((to, from, next) => {
+  const isLogin = hasToken() || localStorage.isLogin
+  if (!isLogin && (to.name !== 'Login' && to.name !== 'Register')) {
+    next({ name: 'Login' })
+  } else {
+    next()
+  }
 })
 
 export default router

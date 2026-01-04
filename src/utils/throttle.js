@@ -12,7 +12,6 @@ export function throttle (fn, interval = 300, options = {}) {
   let lastTime = 0
 
   return function (...args) {
-    const context = this
     const now = Date.now()
 
     // 计算剩余时间
@@ -28,11 +27,11 @@ export function throttle (fn, interval = 300, options = {}) {
 
     if (remaining <= 0 && leading) {
       clearTimer()
-      fn.apply(context, args)
+      fn.apply(this, args)
       lastTime = now
     } else if (!timer && trailing) {
       timer = setTimeout(() => {
-        fn.apply(context, args)
+        fn.apply(this, args)
         lastTime = Date.now()
         timer = null
       }, remaining > 0 ? remaining : interval)

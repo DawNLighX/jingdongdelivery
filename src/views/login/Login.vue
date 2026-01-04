@@ -34,6 +34,7 @@ import { useRouter } from 'vue-router'
 import { reactive, toRefs } from 'vue'
 import { post } from '../../utils/request.js'
 import { debounceUniversal } from '../../utils/debounce'
+import { setTokens } from '../../utils/token'
 import Toast, { toastEffect } from '../../components/Toast.vue'
 
 const loginEffect = (showToast) => {
@@ -64,6 +65,10 @@ const loginEffect = (showToast) => {
         password: data.password
       })
       if (result?.errno === 0) {
+        // 保存 accessToken（refreshToken 由后端通过 HttpOnly cookie 管理）
+        const { accessToken } = result.data
+        setTokens(accessToken)
+
         localStorage.isLogin = true
         router.push({ name: 'Home' })
       } else {
